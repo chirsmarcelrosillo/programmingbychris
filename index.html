@@ -256,7 +256,7 @@
   .rest-timer-btn{ background:none; border:none; color:var(--muted); cursor:pointer; font-size:.95rem; padding:0 2px; line-height:1; flex-shrink:0; }
   .rest-timer-btn:hover{ color:var(--accent); }
   @media print{ .rest-timer-btn{ display:none !important; } }
-  .rest-timer{ position:fixed; bottom:24px; right:24px; display:none; align-items:center; gap:12px; background:var(--surface); border:1px solid var(--accent); border-radius:14px; padding:12px 18px; box-shadow:0 12px 34px rgba(0,0,0,.45); z-index:2500; }
+  .rest-timer{ position:fixed; bottom:24px; right:24px; display:none; align-items:center; gap:12px; background:var(--surface); border:1px solid var(--accent); border-radius:14px; padding:12px 18px; box-shadow:0 12px 34px rgba(0,0,0,.45); z-index:4600; }
   .rest-timer .rt-label{ font-size:.72rem; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); }
   .rest-timer .rt-time{ font-size:1.6rem; font-weight:800; color:var(--text); min-width:64px; text-align:center; font-variant-numeric:tabular-nums; }
   .rest-timer.rt-done{ border-color:oklch(0.72 0.09 150); }
@@ -433,7 +433,7 @@
   @media (max-width:900px){ .site-footer{ padding:18px 20px; } }
 
   /* ---- Toast + new-entry flash ---- */
-  .toast{ position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px); background:linear-gradient(135deg, oklch(0.64 0.15 325), oklch(0.72 0.13 350)); color:#fff; padding:11px 22px; border-radius:11px; font-size:.9rem; font-weight:600; box-shadow:0 12px 34px rgba(0,0,0,.45); opacity:0; pointer-events:none; transition:opacity .25s, transform .25s; z-index:2000; }
+  .toast{ position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px); background:linear-gradient(135deg, oklch(0.64 0.15 325), oklch(0.72 0.13 350)); color:#fff; padding:11px 22px; border-radius:11px; font-size:.9rem; font-weight:600; box-shadow:0 12px 34px rgba(0,0,0,.45); opacity:0; pointer-events:none; transition:opacity .25s, transform .25s; z-index:4600; }
   .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
   @media print{ .toast{ display:none !important; } }
   @keyframes rowflash{ 0%{ background:oklch(0.62 0.15 325 / .40); } 100%{ background:oklch(0.95 0.012 75 / .03); } }

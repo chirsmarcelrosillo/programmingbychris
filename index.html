@@ -323,6 +323,18 @@
   .hb-dot.on{ background:var(--accent); }
   .fullpage input[type="date"]{ color-scheme:dark; }
   .est-pill{ display:inline-block; font-size:.74rem; color:var(--muted); }
+  /* ---- Gym Dictionary ---- */
+  .gloss-cats{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:18px; }
+  .gloss-chip{ background:oklch(0.95 0.012 75 / .05); border:1px solid var(--border); color:var(--muted); font-family:inherit; font-size:.8rem; font-weight:600; padding:6px 13px; border-radius:20px; cursor:pointer; }
+  .gloss-chip:hover{ color:var(--text); border-color:var(--accent); background:oklch(0.62 0.15 325 / .14); }
+  .gloss-cat{ font-size:.76rem; text-transform:uppercase; letter-spacing:.06em; color:oklch(0.80 0.10 325); font-weight:700; margin:22px 0 8px; padding-bottom:6px; border-bottom:1px solid var(--border); }
+  .gloss-row{ display:grid; grid-template-columns:210px 1fr; gap:14px; padding:9px 0; border-bottom:1px solid var(--border); }
+  .gloss-row:last-child{ border-bottom:none; }
+  .gloss-term{ font-weight:700; font-size:.9rem; color:var(--text); }
+  .gloss-def{ font-size:.89rem; color:var(--muted); line-height:1.55; }
+  @media (max-width:600px){ .gloss-row{ grid-template-columns:1fr; gap:2px; } }
+  body.light .gloss-chip{ background:#fff; }
+
   .trk-note{ background:oklch(0.95 0.012 75 / .05); border:1px solid var(--border); border-left:3px solid var(--accent); border-radius:10px; padding:12px 15px; font-size:.85rem; line-height:1.55; margin-bottom:20px; }
   .trk-note strong{ color:var(--text); }
   .pain-suggest{ background:oklch(0.62 0.15 325 / .12); border:1px solid oklch(0.62 0.15 325 / .30); border-radius:9px; padding:9px 12px; font-size:.84rem; margin-bottom:10px; }
@@ -495,6 +507,7 @@
     <button id="tabbtn-programlib" class="nav-item"        onclick="showTab('programlib')"><span class="nav-ico">▤</span> Program Library</button>
     <button id="tabbtn-trackers"   class="nav-item"        onclick="showTab('trackers')"><span class="nav-ico">◷</span> Trackers</button>
     <button id="tabbtn-videos"     class="nav-item"        onclick="showTab('videos')"><span class="nav-ico">▶</span> Form Videos</button>
+    <button id="tabbtn-glossary"   class="nav-item"        onclick="showTab('glossary')"><span class="nav-ico">📖</span> Gym Dictionary</button>
     <button id="tabbtn-howto"      class="nav-item"        onclick="showTab('howto')"><span class="nav-ico">?</span> How to Use</button>
   </nav>
   <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙 Dark Mode</button>
@@ -1003,6 +1016,15 @@
   <p class="ht-lead">Not sure how a movement looks? Search it here and watch a form video. Each link opens a video search in a new tab.</p>
   <input type="text" id="vidSearch" placeholder="Search an exercise… (e.g. goblet squat)" oninput="renderVideoList()" style="margin-bottom:16px;max-width:380px">
   <div id="videoList" class="vid-list"></div>
+</section>
+
+<!-- ============ FULL-PAGE: GYM DICTIONARY ============ -->
+<section id="panel-glossary" class="fullpage" style="display:none">
+  <h2 style="font-size:1.45rem;margin-bottom:4px">📖 Gym Dictionary</h2>
+  <p class="ht-lead">Ran into a word on your program you don't know? Look it up here. No such thing as a dumb question, everybody starts somewhere.</p>
+  <input type="text" id="glossSearch" placeholder="Search a term… (e.g. superset, RPE, eccentric)" oninput="renderGlossary()" style="margin-bottom:8px;max-width:420px">
+  <div class="gloss-cats" id="glossCats"></div>
+  <div id="glossList"></div>
 </section>
 
 <!-- ============ FULL-PAGE: QUICK START (WORKOUT CALCULATOR) ============ -->
@@ -2822,13 +2844,14 @@ function applyAvoid(pool, vals){
    ========================================================================= */
 function showTab(name) {
   const builderTabs=["program","session","library","programlib"];
-  const allTabs=[...builderTabs,"quickstart","trackers","videos","howto"];
+  const allTabs=[...builderTabs,"quickstart","trackers","videos","glossary","howto"];
   const isBuilder=builderTabs.includes(name);
   // builder grid vs full-page sections
   document.getElementById("builderView").style.display      = isBuilder ? "" : "none";
   document.getElementById("panel-quickstart").style.display = (name==="quickstart") ? "block" : "none";
   document.getElementById("panel-trackers").style.display   = (name==="trackers") ? "block" : "none";
   document.getElementById("panel-videos").style.display     = (name==="videos") ? "block" : "none";
+  document.getElementById("panel-glossary").style.display   = (name==="glossary") ? "block" : "none";
   document.getElementById("panel-howto").style.display      = (name==="howto") ? "block" : "none";
   // which builder card is showing
   builderTabs.forEach(t => { const el=document.getElementById("panel-"+t); if(el) el.style.display=(t===name)?"block":"none"; });
@@ -2839,6 +2862,115 @@ function showTab(name) {
   if (name === "trackers")   renderAllTrackers();
   if (name === "videos")     renderVideoList();
   if (name === "howto")      renderSwapList();
+  if (name === "glossary")   renderGlossary();
+}
+
+/* =========================================================================
+   GYM DICTIONARY — plain-English definitions for anything a client might hit
+   on their program. Add a row to teach it a new word.
+   ========================================================================= */
+const GLOSSARY = [
+  // ---- Reading your program ----
+  { cat:"Reading your program", term:"Set", def:"One round of an exercise. If it says 3 x 10, that's 3 sets of 10 reps." },
+  { cat:"Reading your program", term:"Rep (repetition)", def:"One complete movement. Lower the weight and press it back up, that's one rep." },
+  { cat:"Reading your program", term:"3 x 10", def:"Three sets of ten reps. The first number is always sets, the second is reps." },
+  { cat:"Reading your program", term:"10–12 reps", def:"A range. Pick a weight where you could do 10 but not much more than 12." },
+  { cat:"Reading your program", term:"ea (each)", def:"Each side. \"10 ea\" means 10 on the left and 10 on the right." },
+  { cat:"Reading your program", term:"Tempo", def:"How fast to move. \"3s down\" means take a slow three seconds to lower the weight." },
+  { cat:"Reading your program", term:"Rest", def:"How long to wait between sets. Don't skip it, the rest is what lets the next set count." },
+  { cat:"Reading your program", term:"Grp (group)", def:"Which moves pair together. Same letter means do them back to back." },
+  { cat:"Reading your program", term:"A1 / A2", def:"A superset. Do A1, then A2 right away, then rest and repeat the pair." },
+  { cat:"Reading your program", term:"A1 / A2 / A3", def:"A triset. Three moves back to back, then rest and repeat." },
+  { cat:"Reading your program", term:"AMRAP", def:"As Many Reps As Possible. Go until you can't keep good form, then stop." },
+  { cat:"Reading your program", term:"Working weight", def:"The weight you actually do your real sets with, not your warm-up weight." },
+
+  // ---- How hard to push ----
+  { cat:"How hard to push", term:"RPE", def:"Rate of Perceived Exertion, how hard a set felt on a 1 to 10 scale. RPE 8 means about 2 reps left in the tank." },
+  { cat:"How hard to push", term:"RIR", def:"Reps In Reserve, how many more you could have done. \"2 RIR\" means you stopped 2 short of failure." },
+  { cat:"How hard to push", term:"Failure", def:"Going until you physically cannot do another clean rep. We rarely train here, it's hard to recover from." },
+  { cat:"How hard to push", term:"Leave reps in the tank", def:"Stop a couple reps before you're completely done. You'll grow just as well and feel better tomorrow." },
+  { cat:"How hard to push", term:"Progressive overload", def:"Doing a little more over time, more weight, more reps, or better form. It's the whole reason you get stronger." },
+  { cat:"How hard to push", term:"Deload", def:"A lighter, easier week on purpose. It lets your body catch up so you come back stronger." },
+  { cat:"How hard to push", term:"Plateau", def:"When progress stalls out. Usually means it's time to change something or take a deload." },
+
+  // ---- Techniques ----
+  { cat:"Techniques", term:"Superset", def:"Two exercises back to back with no rest between them. Saves time and keeps the heart rate up." },
+  { cat:"Techniques", term:"Triset", def:"Three exercises back to back before you rest." },
+  { cat:"Techniques", term:"Drop set", def:"Finish a set, quickly drop the weight, and keep going. Great burnout on the last set." },
+  { cat:"Techniques", term:"Lengthened partials", def:"When you can't do full reps anymore, keep doing half reps in the stretched position. Surprisingly effective." },
+  { cat:"Techniques", term:"Eccentric", def:"The lowering half of a rep. Lowering slowly is where a lot of the muscle growth comes from." },
+  { cat:"Techniques", term:"Concentric", def:"The lifting half of a rep, the part where you push or pull." },
+  { cat:"Techniques", term:"Isometric / Hold", def:"Holding still under tension, like a plank or a wall sit." },
+  { cat:"Techniques", term:"Time under tension", def:"How long the muscle is actually working during a set. Slower reps mean more of it." },
+  { cat:"Techniques", term:"Pyramid", def:"Going up in weight and down in reps set by set, or the reverse." },
+
+  // ---- Movements ----
+  { cat:"Movements", term:"Compound", def:"A move that uses several joints and muscles at once, like a squat or a row. Biggest bang for your buck." },
+  { cat:"Movements", term:"Isolation", def:"A move that targets one muscle, like a bicep curl. Good for finishing off a body part." },
+  { cat:"Movements", term:"Push", def:"Anything you press away from you. Chest, shoulders, triceps." },
+  { cat:"Movements", term:"Pull", def:"Anything you pull toward you. Back and biceps." },
+  { cat:"Movements", term:"Hinge", def:"Pushing your hips back with a flat back, like a Romanian deadlift. Works hamstrings and glutes." },
+  { cat:"Movements", term:"Unilateral", def:"One side at a time, like a single-arm row. Great for evening out a weaker side." },
+  { cat:"Movements", term:"ROM (range of motion)", def:"How far the joint travels. Full range means all the way down and all the way up." },
+  { cat:"Movements", term:"Neutral grip", def:"Palms facing each other, like holding a hammer. Usually the friendliest on wrists and shoulders." },
+  { cat:"Movements", term:"Pronated / Supinated", def:"Pronated is palms down or away from you. Supinated is palms up or toward you." },
+  { cat:"Movements", term:"Brace", def:"Tighten your midsection like you're about to be poked in the stomach. Do this before every heavy rep." },
+
+  // ---- Session pieces ----
+  { cat:"Session pieces", term:"Warm-Up", def:"Easy movement to get blood flowing and joints ready. Never skip it, it makes everything after it better." },
+  { cat:"Session pieces", term:"Finisher", def:"A short, hard piece at the end of a workout to burn out whatever's left." },
+  { cat:"Session pieces", term:"HIIT", def:"High Intensity Interval Training, short hard bursts with short rests." },
+  { cat:"Session pieces", term:"Steady state", def:"Cardio at one comfortable pace, like an incline walk or the bike. Easier on the body than intervals." },
+  { cat:"Session pieces", term:"Cool-Down", def:"Easy stretching and breathing at the end to bring the heart rate down." },
+  { cat:"Session pieces", term:"Mobility", def:"Work that improves how well a joint moves. Different from stretching, it's active." },
+  { cat:"Session pieces", term:"Split", def:"How you divide your training across the week, like Upper/Lower or Push/Pull/Legs." },
+  { cat:"Session pieces", term:"PPL", def:"Push, Pull, Legs. A very common three-day split." },
+  { cat:"Session pieces", term:"Full body", def:"Hitting everything in one session. Great when you only train 2 or 3 days a week." },
+
+  // ---- Equipment ----
+  { cat:"Equipment", term:"DB", def:"Dumbbell." },
+  { cat:"Equipment", term:"BB", def:"Barbell." },
+  { cat:"Equipment", term:"KB", def:"Kettlebell." },
+  { cat:"Equipment", term:"By the horns", def:"Holding a kettlebell by the two sides of the handle instead of gripping the bar. Much easier on the hands." },
+  { cat:"Equipment", term:"Cable / Machine", def:"Weight stack equipment. Supported and steady, which makes it great for joints and for going heavy safely." },
+  { cat:"Equipment", term:"Bands", def:"Resistance bands. Portable, joint friendly, and they get harder as you stretch them." },
+  { cat:"Equipment", term:"Bench / Incline", def:"Flat is lying level. Incline is head raised, which shifts the work higher onto the chest and shoulders." },
+
+  // ---- Body & recovery ----
+  { cat:"Body & recovery", term:"DOMS", def:"Delayed Onset Muscle Soreness, the ache that shows up a day or two after. Normal, especially with new movements." },
+  { cat:"Body & recovery", term:"Good pain vs bad pain", def:"Muscle burn and fatigue are fine. Sharp, stabbing, or joint pain is not, stop and tell me." },
+  { cat:"Body & recovery", term:"Recovery", def:"Sleep, food, and rest days. This is when you actually get stronger, not in the gym." },
+  { cat:"Body & recovery", term:"Hypertrophy", def:"Muscle growth. Usually trained with moderate weight and 8 to 15 reps." },
+  { cat:"Body & recovery", term:"Recomp", def:"Body recomposition, losing fat and building muscle at the same time." },
+  { cat:"Body & recovery", term:"1RM", def:"One rep max, the most you could lift one time. We estimate it rather than test it." },
+  { cat:"Body & recovery", term:"PR", def:"Personal Record, your best ever on a lift. Worth logging every time you hit one." }
+];
+
+function renderGlossary(){
+  const list=document.getElementById("glossList"); if(!list) return;
+  const q=(document.getElementById("glossSearch")||{}).value||"";
+  const s=q.trim().toLowerCase();
+  const hits=GLOSSARY.filter(g=> !s || g.term.toLowerCase().includes(s) || g.def.toLowerCase().includes(s) || g.cat.toLowerCase().includes(s));
+  const cats=document.getElementById("glossCats");
+  if(cats){
+    const all=[...new Set(GLOSSARY.map(g=>g.cat))];
+    cats.innerHTML = all.map(c=>`<button class="gloss-chip" onclick="glossJump('${escapeHTML(c).replace(/'/g,"\\'")}')">${escapeHTML(c)}</button>`).join("");
+    cats.style.display = s ? "none" : "flex";
+  }
+  if(!hits.length){
+    list.innerHTML=`<p class="trk-empty">Nothing matches "${escapeHTML(q)}". Try another word, or ask me and I'll add it.</p>`;
+    return;
+  }
+  let html="", lastCat=null;
+  hits.forEach(g=>{
+    if(g.cat!==lastCat){ html+=`<h3 class="gloss-cat" id="gloss-${escapeHTML(g.cat).replace(/\s|&/g,"_")}">${escapeHTML(g.cat)}</h3>`; lastCat=g.cat; }
+    html+=`<div class="gloss-row"><div class="gloss-term">${escapeHTML(g.term)}</div><div class="gloss-def">${escapeHTML(g.def)}</div></div>`;
+  });
+  list.innerHTML=html;
+}
+function glossJump(cat){
+  const el=document.getElementById("gloss-"+cat.replace(/\s|&/g,"_"));
+  if(el) el.scrollIntoView({behavior:"smooth", block:"start"});
 }
 
 /* =========================================================================
@@ -4558,9 +4690,13 @@ function renderAllTrackers(){ renderDashboard(); renderWeight(); renderSessions(
 /* Exercise history log — every entry per movement, grouped to show progression. */
 function addExLog(){
   const ex=document.getElementById("exName").value.trim();
-  const wt=document.getElementById("exWt").value.trim();
-  const reps=document.getElementById("exReps").value.trim();
-  if(!ex||!wt) return;
+  const wtRaw=document.getElementById("exWt").value.trim();
+  const repsRaw=document.getElementById("exReps").value.trim();
+  if(!ex||!wtRaw) return;
+  const wtN=numOrWarn(wtRaw,"weight",0,3000); if(wtN===null) return;
+  const wt=String(wtN);
+  let reps=repsRaw;
+  if(repsRaw){ const r=numOrWarn(repsRaw,"reps",1,100); if(r===null) return; reps=String(r); }
   trExLog.unshift({date:todayStr(), ex, wt, reps}); tSet("pt_tr_exlog",trExLog);
   document.getElementById("exName").value=""; document.getElementById("exWt").value=""; document.getElementById("exReps").value=""; renderExLog();
   showToast("📈 Logged"); flashNewest("exList");
@@ -4685,10 +4821,21 @@ function renderDashboard(){
   </div>`;
 }
 
+/* Numbers typed into number boxes have to actually BE numbers, otherwise they
+   poison the dashboard ("current weight: abc") and the charts. */
+function numOrWarn(raw, label, min, max){
+  const n=parseFloat(String(raw).replace(/[^0-9.\-]/g,""));
+  if(isNaN(n)){ showToast(`Enter a number for ${label}`); return null; }
+  if(min!=null && n<min){ showToast(`${label} can't be below ${min}`); return null; }
+  if(max!=null && n>max){ showToast(`${label} can't be above ${max}`); return null; }
+  return n;
+}
 function addWeight(){
   const d=document.getElementById("wtDate").value||todayStr();
-  const v=document.getElementById("wtVal").value.trim();
-  if(!v) return;
+  const raw=document.getElementById("wtVal").value.trim();
+  if(!raw) return;
+  const n=numOrWarn(raw,"weight",1,1500); if(n===null) return;
+  const v=String(n);
   trWeight.push({date:d, lbs:v}); trWeight.sort((a,b)=>b.date.localeCompare(a.date));
   tSet("pt_tr_weight",trWeight); document.getElementById("wtVal").value=""; renderWeight();
   showToast("⚖️ Weight logged"); flashNewest("wtList");
@@ -4713,9 +4860,13 @@ function renderSpark(){
 
 function addPR(){
   const ex=document.getElementById("prEx").value.trim();
-  const wt=document.getElementById("prWt").value.trim();
-  const reps=document.getElementById("prReps").value.trim();
-  if(!ex||!wt) return;
+  const wtRaw=document.getElementById("prWt").value.trim();
+  const repsRaw=document.getElementById("prReps").value.trim();
+  if(!ex||!wtRaw) return;
+  const wtN=numOrWarn(wtRaw,"weight",0,3000); if(wtN===null) return;
+  const wt=String(wtN);
+  let reps=repsRaw;
+  if(repsRaw){ const r=numOrWarn(repsRaw,"reps",1,100); if(r===null) return; reps=String(r); }
   // Auto-detect a new best for this exercise via estimated 1-rep-max (Epley)
   const prevBest=Math.max(0, ...trPR.filter(p=>(p.ex||"").toLowerCase()===ex.toLowerCase()).map(p=>e1rm(p.wt,p.reps)));
   const isPR = e1rm(wt,reps) > prevBest + 0.01;
@@ -4757,9 +4908,11 @@ function renderHabit(){
 function addPain(){
   const d=document.getElementById("pnDate").value||todayStr();
   const area=document.getElementById("pnArea").value.trim();
-  const lvl=document.getElementById("pnLevel").value.trim();
+  const lvlRaw=document.getElementById("pnLevel").value.trim();
   const note=document.getElementById("pnNote").value.trim();
   if(!area) return;
+  let lvl=lvlRaw;
+  if(lvlRaw){ const n=numOrWarn(lvlRaw,"pain level",0,10); if(n===null) return; lvl=String(n); }
   trPain.unshift({date:d, area, lvl, note}); tSet("pt_tr_pain",trPain);
   showPainSuggest(area);
   document.getElementById("pnArea").value=""; document.getElementById("pnLevel").value=""; document.getElementById("pnNote").value=""; renderPain();

@@ -323,6 +323,77 @@
   .hb-dot.on{ background:var(--accent); }
   .fullpage input[type="date"]{ color-scheme:dark; }
   .est-pill{ display:inline-block; font-size:.74rem; color:var(--muted); }
+  /* ---- Library search + filter chips ---- */
+  .lib-filters{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
+  .lib-chip{ background:oklch(0.95 0.012 75 / .05); border:1px solid var(--border); color:var(--muted);
+    font-family:inherit; font-size:.76rem; font-weight:600; padding:5px 12px; border-radius:20px; cursor:pointer; }
+  .lib-chip:hover{ color:var(--text); border-color:var(--accent); }
+  .lib-chip.active{ background:oklch(0.62 0.15 325 / .22); border-color:oklch(0.62 0.15 325 / .55); color:var(--text); }
+  .lib-count{ font-size:.72rem; color:var(--muted); margin:6px 0 10px; }
+  body.light .lib-chip{ background:#fff; }
+
+  /* ---- "Last time" history under each exercise ---- */
+  .last-time{ font-size:.72rem; color:oklch(0.78 0.10 150); margin-top:3px; letter-spacing:.01em; }
+  .last-time:empty{ display:none; }
+  body.light .last-time{ color:oklch(0.45 0.12 150); }
+  @media print{ .last-time{ display:none !important; } }
+
+  /* ---- Resume banner (autosave) ---- */
+  .resume-banner{ display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;
+    background:oklch(0.62 0.15 325 / .12); border:1px solid oklch(0.62 0.15 325 / .35); border-radius:12px;
+    padding:14px 16px; margin-bottom:22px; text-align:left; }
+  @media print{ .resume-banner{ display:none !important; } }
+
+  /* ---- WORKOUT MODE ---- */
+  .btn-workout{ background:linear-gradient(135deg, oklch(0.70 0.16 150), oklch(0.62 0.14 165)); color:#08210f; font-weight:700; }
+  body.wm-open{ overflow:hidden; }
+  #workoutMode{ position:fixed; inset:0; z-index:4000; background:var(--bg); overflow-y:auto; display:none; }
+  .wm-shell{ max-width:620px; margin:0 auto; padding:16px 16px 40px; min-height:100%; display:flex; flex-direction:column; }
+  .wm-bar{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; }
+  .wm-daysel{ width:auto; max-width:70%; font-size:.9rem; font-weight:600; padding:8px 10px; border-radius:10px; }
+  .wm-daylabel{ font-size:1rem; font-weight:700; }
+  .wm-exit{ background:oklch(0.95 0.012 75 / .08); border:1px solid var(--border); color:var(--text);
+    font-family:inherit; font-size:.85rem; font-weight:700; padding:8px 14px; border-radius:10px; cursor:pointer; flex-shrink:0; }
+  .wm-exit:hover{ border-color:var(--accent); }
+  .wm-progress{ height:6px; background:oklch(0.95 0.012 75 / .10); border-radius:99px; overflow:hidden; margin-bottom:6px; }
+  .wm-progress-fill{ height:100%; background:linear-gradient(90deg, oklch(0.64 0.15 325), oklch(0.72 0.13 350)); transition:width .25s; }
+  .wm-count{ font-size:.75rem; color:var(--muted); margin-bottom:14px; text-align:center; }
+  .wm-card{ background:var(--surface); border:1px solid var(--border); border-radius:18px; padding:22px 20px; box-shadow:var(--shadow); }
+  .wm-tags{ display:flex; gap:6px; margin-bottom:8px; }
+  .wm-tag{ font-size:.68rem; font-weight:800; text-transform:uppercase; letter-spacing:.05em;
+    background:oklch(0.72 0.10 300 / .18); color:oklch(0.85 0.10 320); padding:3px 9px; border-radius:20px; }
+  .wm-tag.grp{ background:oklch(0.62 0.15 325 / .22); }
+  .wm-name{ font-size:1.75rem; font-weight:800; line-height:1.15; margin-bottom:4px; }
+  .wm-last{ font-size:.85rem; color:oklch(0.78 0.10 150); font-weight:600; margin-bottom:8px; }
+  .wm-last:empty{ display:none; }
+  .wm-cue{ font-size:.95rem; color:var(--muted); line-height:1.5; margin-bottom:16px; }
+  .wm-targets{ display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px; }
+  .wm-target{ flex:1; min-width:74px; background:oklch(0.95 0.012 75 / .05); border:1px solid var(--border);
+    border-radius:12px; padding:10px 8px; text-align:center; }
+  .wm-target span{ display:block; font-size:.66rem; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin-bottom:3px; }
+  .wm-target strong{ font-size:1.05rem; }
+  .wm-label{ font-size:.72rem; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); font-weight:700; margin-bottom:8px; }
+  .wm-sets{ display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px; }
+  .wm-set{ width:58px; height:58px; border-radius:16px; border:2px solid var(--border);
+    background:oklch(0.95 0.012 75 / .04); color:var(--text); font-family:inherit; font-size:1.25rem; font-weight:800; cursor:pointer; transition:all .15s; }
+  .wm-set:hover{ border-color:var(--accent); }
+  .wm-set.on{ background:linear-gradient(135deg, oklch(0.70 0.16 150), oklch(0.62 0.14 165)); border-color:transparent; color:#08210f; }
+  .wm-inputs{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px; }
+  .wm-in{ flex:1; min-width:130px; }
+  .wm-in span{ display:block; font-size:.68rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:700; margin-bottom:5px; }
+  .wm-in input{ font-size:1.1rem; padding:11px 12px; border-radius:10px; }
+  .wm-rest{ width:100%; background:oklch(0.62 0.15 325 / .16); border:1px solid oklch(0.62 0.15 325 / .38);
+    color:var(--text); font-family:inherit; font-size:.9rem; font-weight:700; padding:12px; border-radius:12px; cursor:pointer; }
+  .wm-rest:hover{ background:oklch(0.62 0.15 325 / .26); }
+  .wm-nav{ display:flex; gap:10px; margin-top:18px; }
+  .wm-btn{ flex:1; padding:16px; border:none; border-radius:14px; font-family:inherit; font-size:1rem; font-weight:800; cursor:pointer;
+    background:linear-gradient(135deg, oklch(0.64 0.15 325), oklch(0.72 0.13 350)); color:#fff; }
+  .wm-btn.ghost{ background:oklch(0.95 0.012 75 / .07); color:var(--text); border:1px solid var(--border); }
+  .wm-btn:disabled{ opacity:.35; cursor:not-allowed; }
+  body.light .wm-set{ background:#fff; }
+  body.light .wm-target{ background:#faf8fc; }
+  @media (max-width:400px){ .wm-name{ font-size:1.5rem; } .wm-set{ width:52px; height:52px; } }
+
   /* ---- Gym Dictionary ---- */
   .gloss-cats{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:18px; }
   .gloss-chip{ background:oklch(0.95 0.012 75 / .05); border:1px solid var(--border); color:var(--muted); font-family:inherit; font-size:.8rem; font-weight:600; padding:6px 13px; border-radius:20px; cursor:pointer; }
@@ -818,6 +889,19 @@
       <h2>Session Library</h2>
       <p style="font-size:.82rem;color:var(--muted);margin-bottom:8px">Ready-made single sessions — pull one up instantly, then edit and share. Add your own in the <code>SESSION_LIBRARY</code> config.</p>
       <div class="field"><label>Client Name (optional)</label><input type="text" id="libClientName" placeholder="First name"></div>
+      <input type="text" id="libSearch" placeholder="Search sessions… (e.g. legs, glutes, bench)" oninput="renderLibraryList()" style="margin-bottom:8px">
+      <div class="lib-filters">
+        <button class="lib-chip active" data-f="level" data-v="all"          onclick="setLibFilter(this,'level','all')">All levels</button>
+        <button class="lib-chip"        data-f="level" data-v="Beginner-friendly" onclick="setLibFilter(this,'level','Beginner-friendly')">Beginner</button>
+        <button class="lib-chip"        data-f="level" data-v="Intermediate" onclick="setLibFilter(this,'level','Intermediate')">Intermediate</button>
+        <button class="lib-chip"        data-f="level" data-v="Advanced"     onclick="setLibFilter(this,'level','Advanced')">Advanced</button>
+      </div>
+      <div class="lib-filters">
+        <button class="lib-chip active" data-f="equip" data-v="all"   onclick="setLibFilter(this,'equip','all')">Any equipment</button>
+        <button class="lib-chip"        data-f="equip" data-v="CIH"   onclick="setLibFilter(this,'equip','CIH')">Free weights / bands</button>
+        <button class="lib-chip"        data-f="equip" data-v="VASA"  onclick="setLibFilter(this,'equip','VASA')">Full gym</button>
+      </div>
+      <div id="libCount" class="lib-count"></div>
       <div id="libraryList"></div>
     </div>
 
@@ -841,6 +925,13 @@
         </div>
         <div style="font-size:.74rem;color:var(--muted);margin-top:5px">Beginner = fewer sets, higher reps, no intensity techniques. Advanced = more sets, lower reps, heavier.</div>
       </div>
+      <input type="text" id="progSearch" placeholder="Search programs… (e.g. PPL, beginner, 4 week)" oninput="renderProgramLibList()" style="margin-bottom:8px">
+      <div class="lib-filters">
+        <button class="lib-chip active" data-f="pequip" data-v="all"  onclick="setLibFilter(this,'pequip','all')">Any equipment</button>
+        <button class="lib-chip"        data-f="pequip" data-v="CIH"  onclick="setLibFilter(this,'pequip','CIH')">Free weights / bands</button>
+        <button class="lib-chip"        data-f="pequip" data-v="VASA" onclick="setLibFilter(this,'pequip','VASA')">Full gym</button>
+      </div>
+      <div id="progCount" class="lib-count"></div>
       <div id="programLibList"></div>
     </div>
 
@@ -2795,6 +2886,62 @@ function saveMyWorkout(){
 
 function hasMyWorkout(){ try{ return !!localStorage.getItem("pt_my_workout"); }catch(e){ return false; } }
 
+/* =========================================================================
+   AUTOSAVE — quietly keep the workout that's on screen (and every weight typed
+   into it) so a refresh, a phone lock, or a closed tab mid-session can't lose
+   anything. Saves ~1s after the last keystroke.
+   ========================================================================= */
+let _autosaveTimer=null;
+function scheduleAutosave(){
+  clearTimeout(_autosaveTimer);
+  _autosaveTimer=setTimeout(doAutosave, 900);
+}
+function doAutosave(){
+  try{
+    if(!currentProgram) return;
+    const data=captureLiveProgram();
+    if(!data || !data.days || !data.days.length) return;
+    localStorage.setItem("pt_autosave", JSON.stringify({t:Date.now(), data}));
+  }catch(e){}
+}
+function readAutosave(){
+  try{
+    const raw=localStorage.getItem("pt_autosave"); if(!raw) return null;
+    const a=JSON.parse(raw);
+    if(!a || !a.data || !a.data.days) return null;
+    if(Date.now()-(a.t||0) > 1000*60*60*72) return null;      // forget after 3 days
+    return a;
+  }catch(e){ return null; }
+}
+function resumeAutosave(){
+  const a=readAutosave(); if(!a) return;
+  renderProgram(a.data.vals, a.data.days, a.data.hiitData);
+  currentProgram={vals:a.data.vals, days:a.data.days, hiitData:a.data.hiitData};
+  showToast("↩️ Picked up where you left off");
+}
+function discardAutosave(){
+  try{ localStorage.removeItem("pt_autosave"); }catch(e){}
+  const b=document.getElementById("resumeBanner"); if(b) b.remove();
+}
+/* Offer a one-tap resume on the empty state if we have a recent autosave. */
+function refreshResumeBanner(){
+  const host=document.getElementById("emptyState"); if(!host) return;
+  const old=document.getElementById("resumeBanner"); if(old) old.remove();
+  const a=readAutosave(); if(!a) return;
+  const mins=Math.round((Date.now()-a.t)/60000);
+  const when = mins<1 ? "just now" : mins<60 ? `${mins} min ago` : (mins<1440 ? `${Math.round(mins/60)} hr ago` : `${Math.round(mins/1440)} day(s) ago`);
+  const name=(a.data.vals&&a.data.vals.name)?a.data.vals.name:"your workout";
+  const div=document.createElement("div");
+  div.id="resumeBanner";
+  div.className="resume-banner";
+  div.innerHTML=`<div><strong>↩️ Unfinished workout</strong><div style="font-size:.82rem;color:var(--muted);margin-top:2px">${escapeHTML(name)} · last edited ${when}</div></div>
+    <div class="btn-row"><button class="btn btn-primary btn-sm" onclick="resumeAutosave()">Resume</button><button class="btn btn-secondary btn-sm" onclick="discardAutosave()">Dismiss</button></div>`;
+  host.insertBefore(div, host.firstChild);
+}
+/* Any edit inside the program output triggers an autosave. */
+document.addEventListener("input", e=>{ if(e.target.closest && e.target.closest("#programOutput")) scheduleAutosave(); });
+document.addEventListener("change", e=>{ if(e.target.closest && e.target.closest("#programOutput")) scheduleAutosave(); });
+
 /* The client taps this when they return to pull their plan back up. */
 function loadMyWorkout(){
   let saved=null;
@@ -3540,11 +3687,34 @@ function sessionCard(s){
     </div>
   </div>`;
 }
+/* Library search + filters — 27 sessions and 14 programs is too many to scroll. */
+let libFilters={ level:"all", equip:"all", pequip:"all" };
+function setLibFilter(btn, key, val){
+  libFilters[key]=val;
+  document.querySelectorAll(`.lib-chip[data-f="${key}"]`).forEach(b=>b.classList.toggle("active", b===btn));
+  if(key==="pequip") renderProgramLibList(); else renderLibraryList();
+}
+function sessionMatches(s, q){
+  if(libFilters.level!=="all" && libDifficulty(s.intensity)!==libFilters.level) return false;
+  if(libFilters.equip!=="all" && s.facility!=="any" && s.facility!==libFilters.equip) return false;
+  if(!q) return true;
+  const hay=[s.title, s.focusLabel, s.notes||"", libDifficulty(s.intensity), goalLabel(s.goal), libEquip(s.facility),
+             ...(s.rows||[]).map(r=>r.name)].join(" ").toLowerCase();
+  return hay.includes(q);
+}
 function renderLibraryList(){
   const list=document.getElementById("libraryList");
   if(!list) return;
-  const work=SESSION_LIBRARY.filter(s=>s.kind!=="warmup");
-  const warm=SESSION_LIBRARY.filter(s=>s.kind==="warmup");
+  const q=((document.getElementById("libSearch")||{}).value||"").trim().toLowerCase();
+  const work=SESSION_LIBRARY.filter(s=>s.kind!=="warmup" && sessionMatches(s,q));
+  const warm=SESSION_LIBRARY.filter(s=>s.kind==="warmup" && sessionMatches(s,q));
+  const count=document.getElementById("libCount");
+  const total=SESSION_LIBRARY.length, shown=work.length+warm.length;
+  if(count) count.textContent = shown===total ? `${total} sessions` : `${shown} of ${total} sessions`;
+  if(!shown){
+    list.innerHTML=`<p class="trk-empty">No sessions match that. Try a different word or clear the filters.</p>`;
+    return;
+  }
   let html=work.map(sessionCard).join("");
   if(warm.length) html+=`<div class="lib-subhead">Warm-Ups</div>`+warm.map(sessionCard).join("");
   list.innerHTML=html;
@@ -3573,10 +3743,22 @@ function loadLibrarySession(id){
 /* =========================================================================
    PROGRAM LIBRARY
    ========================================================================= */
+function programMatches(p, q){
+  if(libFilters.pequip!=="all" && p.facility!=="any" && p.facility!==libFilters.pequip) return false;
+  if(!q) return true;
+  const hay=[p.title, p.summary, p.weeks, p.notes||"", libEquip(p.facility), goalLabel(p.goal),
+             PROGRAM_LEVEL[p.id]||"", ...(p.days||[]).map(d=>d.label)].join(" ").toLowerCase();
+  return hay.includes(q);
+}
 function renderProgramLibList(){
   const list=document.getElementById("programLibList");
   if(!list) return;
-  list.innerHTML=PROGRAM_LIBRARY.map(p=>{
+  const q=((document.getElementById("progSearch")||{}).value||"").trim().toLowerCase();
+  const hits=PROGRAM_LIBRARY.filter(p=>programMatches(p,q));
+  const count=document.getElementById("progCount");
+  if(count) count.textContent = hits.length===PROGRAM_LIBRARY.length ? `${PROGRAM_LIBRARY.length} programs` : `${hits.length} of ${PROGRAM_LIBRARY.length} programs`;
+  if(!hits.length){ list.innerHTML=`<p class="trk-empty">No programs match that. Try a different word or clear the filters.</p>`; return; }
+  list.innerHTML=hits.map(p=>{
     const diff=PROGRAM_LEVEL[p.id]||"All levels";
     return `<div class="lib-card" title="${escapeHTML(p.notes||p.summary)}" onclick="loadLibraryProgram('${p.id}')">
       <h3>${escapeHTML(p.title)}</h3>
@@ -3638,6 +3820,180 @@ function loadLibraryProgram(id){
 /* =========================================================================
    RENDER OUTPUT
    ========================================================================= */
+/* =========================================================================
+   WORKOUT MODE — a big, thumb-friendly view for while you're actually
+   training: one exercise at a time, tap each set as you finish it, and the
+   rest timer starts itself. Everything you type flows straight back into the
+   normal table, and you can flip in and out at any point without losing work.
+   ========================================================================= */
+let wm = { on:false, dayIdx:0, exIdx:0, data:null, done:{} };
+
+function trainableDays(data){
+  return (data.days||[]).map((d,i)=>({d,i}));
+}
+function openWorkoutMode(){
+  const data=captureLiveProgram();
+  if(!data || !data.days || !data.days.length){ alert("Generate or open a workout first."); return; }
+  wm.data=data; wm.on=true; wm.exIdx=0;
+  // start on the first day that actually has exercises
+  const first=trainableDays(data).find(x=>x.d.rows && x.d.rows.length);
+  wm.dayIdx=first?first.i:0;
+  wm.done={};
+  let host=document.getElementById("workoutMode");
+  if(!host){ host=document.createElement("div"); host.id="workoutMode"; document.body.appendChild(host); }
+  host.style.display="block";
+  document.body.classList.add("wm-open");
+  renderWorkoutMode();
+}
+/* Flip back to the normal table, keeping every weight/note typed in here. */
+function closeWorkoutMode(){
+  if(wm.data){
+    currentProgram=wm.data;
+    renderProgram(wm.data.vals, wm.data.days, wm.data.hiitData);
+  }
+  wm.on=false;
+  const host=document.getElementById("workoutMode");
+  if(host) host.style.display="none";
+  document.body.classList.remove("wm-open");
+  stopRestTimer();
+  doAutosave();
+}
+function wmDay(){ return (wm.data.days||[])[wm.dayIdx]||{rows:[]}; }
+function wmRow(){ return (wmDay().rows||[])[wm.exIdx]||null; }
+function wmKey(){ return `${wm.dayIdx}-${wm.exIdx}`; }
+
+function wmGo(delta){
+  const rows=wmDay().rows||[];
+  const next=wm.exIdx+delta;
+  if(next<0){ wm.exIdx=0; }
+  else if(next>=rows.length){ wmFinishPrompt(); return; }
+  else wm.exIdx=next;
+  stopRestTimer();
+  renderWorkoutMode();
+}
+function wmPickDay(i){ wm.dayIdx=parseInt(i,10); wm.exIdx=0; stopRestTimer(); renderWorkoutMode(); }
+
+/* Tap a set to mark it done. Completing one auto-starts the rest timer. */
+function wmToggleSet(n){
+  const k=wmKey(); wm.done[k]=wm.done[k]||{};
+  const wasDone=!!wm.done[k][n];
+  wm.done[k][n]=!wasDone;
+  const row=wmRow();
+  if(!wasDone && row && row.rest) startRestTimer(row.rest);   // just finished a set -> rest
+  renderWorkoutMode();
+}
+/* Edits inside workout mode write straight back to the underlying row. */
+function wmSet(field, val){
+  const row=wmRow(); if(!row) return;
+  row[field]=val;
+  if(field==="weight"){ const el=document.getElementById("wmLast"); if(el) el.textContent=lastTimeFor(row.name)||""; }
+  doAutosave();
+}
+function wmFinishPrompt(){
+  const total=wmTotalSets(), done=wmDoneSets();
+  const msg = done>=total
+    ? "Nice work, that's everything. Save your weights and log the session?"
+    : `You've got ${total-done} set(s) left. Finish and log the session anyway?`;
+  if(confirm(msg)){
+    currentProgram=wm.data;
+    renderProgram(wm.data.vals, wm.data.days, wm.data.hiitData);   // paint edits into the table
+    try{ saveMyWorkout(); }catch(e){}
+    try{ logSession(); }catch(e){}
+    closeWorkoutMode();
+    showToast("✅ Workout logged, well done");
+  }
+}
+function wmTotalSets(){
+  let n=0; (wmDay().rows||[]).forEach(r=>{ n+=Math.max(1,parseInt(r.sets,10)||1); });
+  return n;
+}
+function wmDoneSets(){
+  let n=0;
+  Object.keys(wm.done).forEach(k=>{ if(k.startsWith(wm.dayIdx+"-")) n+=Object.values(wm.done[k]).filter(Boolean).length; });
+  return n;
+}
+
+function renderWorkoutMode(){
+  const host=document.getElementById("workoutMode"); if(!host) return;
+  const day=wmDay(), rows=day.rows||[], row=wmRow();
+  const vals=wm.data.vals||{};
+  const days=trainableDays(wm.data).filter(x=>x.d.rows && x.d.rows.length);
+  const title=dayTitleFor(day, wm.dayIdx, vals, (wm.data.days||[]).length);
+
+  if(!row){
+    host.innerHTML=`<div class="wm-shell"><div class="wm-bar"><button class="wm-exit" onclick="closeWorkoutMode()">✕ Exit</button></div>
+      <div class="wm-card"><p>This block has no exercises yet.</p></div></div>`;
+    return;
+  }
+
+  const sets=Math.max(1,parseInt(row.sets,10)||1);
+  const doneMap=wm.done[wmKey()]||{};
+  const setChips=Array.from({length:sets},(_,i)=>{
+    const n=i+1, on=!!doneMap[n];
+    return `<button class="wm-set${on?" on":""}" onclick="wmToggleSet(${n})">${on?"✓":n}</button>`;
+  }).join("");
+
+  const dayPicker = days.length>1
+    ? `<select class="wm-daysel" onchange="wmPickDay(this.value)">${days.map(x=>`<option value="${x.i}" ${x.i===wm.dayIdx?"selected":""}>${escapeHTML(dayTitleFor(x.d,x.i,vals,(wm.data.days||[]).length))}</option>`).join("")}</select>`
+    : `<span class="wm-daylabel">${escapeHTML(title)}</span>`;
+
+  const pct=Math.round(((wm.exIdx)/rows.length)*100);
+  const last=lastTimeFor(row.name);
+  const tech=(row.technique&&row.technique!=="—")?`<span class="wm-tag">${escapeHTML(row.technique)}</span>`:"";
+  const grp=row.group?`<span class="wm-tag grp">${escapeHTML(row.group)}</span>`:"";
+
+  host.innerHTML=`
+   <div class="wm-shell">
+    <div class="wm-bar">
+      ${dayPicker}
+      <button class="wm-exit" onclick="closeWorkoutMode()" title="Back to the full workout">✕ Exit</button>
+    </div>
+
+    <div class="wm-progress"><div class="wm-progress-fill" style="width:${pct}%"></div></div>
+    <div class="wm-count">Exercise ${wm.exIdx+1} of ${rows.length} · ${wmDoneSets()}/${wmTotalSets()} sets done</div>
+
+    <div class="wm-card">
+      <div class="wm-tags">${grp}${tech}</div>
+      <h2 class="wm-name">${escapeHTML(row.name)}</h2>
+      ${last?`<div class="wm-last" id="wmLast">${escapeHTML(last)}</div>`:`<div class="wm-last" id="wmLast"></div>`}
+      ${row.cue?`<p class="wm-cue">${escapeHTML(row.cue)}</p>`:""}
+
+      <div class="wm-targets">
+        <div class="wm-target"><span>Sets</span><strong>${escapeHTML(String(row.sets))}</strong></div>
+        <div class="wm-target"><span>Reps</span><strong>${escapeHTML(String(row.reps))}</strong></div>
+        ${row.tempo?`<div class="wm-target"><span>Tempo</span><strong>${escapeHTML(row.tempo)}</strong></div>`:""}
+        ${row.rest?`<div class="wm-target"><span>Rest</span><strong>${escapeHTML(row.rest)}</strong></div>`:""}
+      </div>
+
+      <div class="wm-label">Tap each set as you finish it</div>
+      <div class="wm-sets">${setChips}</div>
+
+      <div class="wm-inputs">
+        <label class="wm-in"><span>Weight used</span>
+          <input type="text" inputmode="decimal" value="${escapeHTML(row.weight||"")}" placeholder="lbs" oninput="wmSet('weight',this.value)">
+        </label>
+        <label class="wm-in"><span>Notes</span>
+          <input type="text" value="${escapeHTML(row.notes||"")}" placeholder="How'd it feel?" oninput="wmSet('notes',this.value)">
+        </label>
+      </div>
+
+      <button class="wm-rest" onclick="startRestTimer('${escapeHTML(row.rest||"60s")}')">⏱ Start rest timer${row.rest?` (${escapeHTML(row.rest)})`:""}</button>
+    </div>
+
+    <div class="wm-nav">
+      <button class="wm-btn ghost" onclick="wmGo(-1)" ${wm.exIdx===0?"disabled":""}>‹ Back</button>
+      <button class="wm-btn" onclick="wmGo(1)">${wm.exIdx>=rows.length-1?"Finish ✓":"Next ›"}</button>
+    </div>
+   </div>`;
+}
+/* Arrow keys work too, for anyone propping a laptop on the bench. */
+document.addEventListener("keydown", e=>{
+  if(!wm.on) return;
+  if(e.key==="ArrowRight") wmGo(1);
+  else if(e.key==="ArrowLeft") wmGo(-1);
+  else if(e.key==="Escape") closeWorkoutMode();
+});
+
 /* =========================================================================
    EXTRA SECTIONS — bolt a Core block, a HIIT finisher, a cool-down, or any
    custom block onto a workout. A section is just another "day" carrying
@@ -3862,6 +4218,7 @@ function renderProgram(vals, days, hiitData){
         <button class="btn btn-secondary btn-sm" onclick="shareLink()" title="Copy a link that opens this exact workout">🔗 Share link</button>
         <button class="btn btn-secondary btn-sm" onclick="saveMyWorkout()" title="Save this workout to this device so you can pull it back up">💾 Save my workout</button>
         <button class="btn btn-primary btn-sm" onclick="emailProgram()">Email</button>
+        <button class="btn btn-workout btn-sm" onclick="openWorkoutMode()" title="Big, one-exercise-at-a-time view for while you're training">▶ Workout Mode</button>
       </div>
     </div>
     ${flagHTML}
@@ -3912,6 +4269,28 @@ function techniqueOptions(selected){
   return TECHNIQUE_OPTIONS.map(t=>`<option value="${escapeHTML(t)}" ${t===(selected||"—")?"selected":""}>${escapeHTML(t)}</option>`).join("");
 }
 
+/* "Last time: 135 lb x 10" — pulled from the exercise log first (it has reps and
+   a date), falling back to the remembered working weight. This is the number
+   that actually drives progressive overload, so it belongs next to the move. */
+function lastTimeFor(name){
+  if(!name) return "";
+  const hit=(trExLog||[]).find(e=>(e.ex||"").toLowerCase()===name.toLowerCase());
+  if(hit){
+    const reps=hit.reps?` × ${hit.reps}`:"";
+    return `Last time: ${hit.wt} lb${reps}${hit.date?` · ${prettyDate(hit.date)}`:""}`;
+  }
+  const m=myWeights[name];
+  if(m && m.weight) return `Last time: ${m.weight} lb`;
+  return "";
+}
+/* 2026-07-14 -> "Jul 14" */
+function prettyDate(iso){
+  const p=String(iso).split("-");
+  if(p.length!==3) return iso;
+  const mon=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][parseInt(p[1],10)-1]||"";
+  return `${mon} ${parseInt(p[2],10)}`;
+}
+
 function buildRow(row,dayIdx,rowIdx,exerciseOptions){
   const uid=`${dayIdx}-${rowIdx}`;
   const opts=(exerciseOptions||[]).map(ex=>`<option value="${escapeHTML(ex.name)}" ${ex.name===row.name?"selected":""}>${escapeHTML(ex.name)}</option>`).join("");
@@ -3921,7 +4300,7 @@ function buildRow(row,dayIdx,rowIdx,exerciseOptions){
   return `<tr id="row-${uid}" data-day="${dayIdx}" data-row="${rowIdx}">
     <td data-label="Group"><input class="editable-input group-input" type="text" value="${escapeHTML(row.group||"")}" title="Superset group (A1, A2, B…)"></td>
     <td class="num-cell" style="color:var(--muted);font-size:.82rem">${rowIdx+1}</td>
-    <td data-label="Exercise"><div class="ex-cell"><select class="editable-select" onchange="updateRowCue('${uid}',this.value)">${extraOpt}${opts}</select><button class="swap-ico" onclick="rowSwapMenu(this)" title="Swap for something similar">⇄</button></div></td>
+    <td data-label="Exercise"><div class="ex-cell"><select class="editable-select" onchange="updateRowCue('${uid}',this.value)">${extraOpt}${opts}</select><button class="swap-ico" onclick="rowSwapMenu(this)" title="Swap for something similar">⇄</button></div><div class="last-time" id="last-${uid}">${escapeHTML(lastTimeFor(row.name))}</div></td>
     <td data-label="Sets"><input class="editable-input" type="text" value="${escapeHTML(String(row.sets))}" style="width:36px" title="Sets"></td>
     <td data-label="Reps"><input class="editable-input" type="text" value="${escapeHTML(String(row.reps))}" title="Reps"></td>
     <td data-label="Weight"><input class="editable-input wt-input" type="text" value="${escapeHTML(row.weight||"")}" style="width:54px" placeholder="lbs" title="Working weight (remembered per client)"></td>
@@ -3964,6 +4343,9 @@ function renumberRows(dayIdx){
 function updateRowCue(uid,newName){
   const cell=document.getElementById(`cue-${uid}`);
   if(cell) cell.textContent=cueFor(newName);
+  const lt=document.getElementById(`last-${uid}`);
+  if(lt) lt.textContent=lastTimeFor(newName);        // history follows the swapped-in move
+  scheduleAutosave();
 }
 
 /* =========================================================================
@@ -4982,6 +5364,7 @@ renderAllTrackers();
 renderSwapList();
 renderVideoList();
 refreshMyWorkoutButton();
+refreshResumeBanner();
 toggleFrequency();
 loadQsAnswers();
 loadFromHash();

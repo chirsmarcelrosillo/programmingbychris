@@ -261,7 +261,10 @@
   .rest-timer .rt-time{ font-size:1.6rem; font-weight:800; color:var(--text); min-width:64px; text-align:center; font-variant-numeric:tabular-nums; }
   .rest-timer.rt-done{ border-color:oklch(0.72 0.09 150); }
   .rest-timer.rt-done .rt-time{ color:oklch(0.80 0.10 150); }
-  .rest-timer .rt-close{ background:none; border:none; color:var(--muted); cursor:pointer; font-size:1rem; }
+  .rest-timer .rt-btn{ background:oklch(0.62 0.15 325 / .18); border:1px solid oklch(0.62 0.15 325 / .40); color:var(--text); font-family:inherit; font-size:.78rem; font-weight:700; padding:6px 10px; border-radius:8px; cursor:pointer; }
+  .rest-timer .rt-btn:hover{ background:oklch(0.62 0.15 325 / .32); }
+  .rest-timer .rt-close{ background:none; border:none; color:var(--muted); cursor:pointer; font-size:1rem; padding:0 2px; }
+  @media (max-width:560px){ .rest-timer{ left:12px; right:12px; bottom:12px; justify-content:center; padding:12px; gap:8px; } }
   .row-swap-menu{ position:absolute; z-index:2600; background:var(--surface); border:1px solid var(--border); border-radius:10px; box-shadow:0 12px 34px rgba(0,0,0,.4); padding:6px; min-width:210px; max-width:250px; }
   .row-swap-menu .rsm-title{ font-size:.72rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:700; padding:5px 8px; }
   .row-swap-menu .rsm-empty{ font-size:.82rem; color:var(--muted); padding:4px 8px 8px; }
@@ -323,6 +326,20 @@
   .hb-dot.on{ background:var(--accent); }
   .fullpage input[type="date"]{ color-scheme:dark; }
   .est-pill{ display:inline-block; font-size:.74rem; color:var(--muted); }
+  /* ---- What's New modal ---- */
+  .wn-overlay{ position:fixed; inset:0; z-index:4800; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; padding:18px; }
+  .wn-card{ position:relative; background:var(--surface); border:1px solid var(--border); border-radius:20px; box-shadow:0 24px 60px rgba(0,0,0,.5); max-width:440px; width:100%; padding:26px 24px 22px; max-height:90vh; overflow-y:auto; }
+  .wn-x{ position:absolute; top:14px; right:14px; background:none; border:none; color:var(--muted); font-size:1.1rem; cursor:pointer; }
+  .wn-x:hover{ color:var(--text); }
+  .wn-badge{ display:inline-block; font-size:.7rem; font-weight:800; text-transform:uppercase; letter-spacing:.06em; color:oklch(0.85 0.10 320); background:oklch(0.62 0.15 325 / .18); padding:4px 11px; border-radius:20px; margin-bottom:10px; }
+  .wn-title{ font-size:1.35rem; font-weight:800; margin-bottom:16px; }
+  .wn-list{ display:flex; flex-direction:column; gap:13px; margin-bottom:20px; }
+  .wn-item{ display:flex; gap:12px; align-items:flex-start; }
+  .wn-ico{ font-size:1.1rem; flex-shrink:0; width:26px; text-align:center; }
+  .wn-item strong{ font-size:.95rem; }
+  .wn-d{ font-size:.85rem; color:var(--muted); line-height:1.5; margin-top:1px; }
+  body.light .wn-badge{ color:oklch(0.45 0.14 320); }
+
   /* ---- Library search + filter chips ---- */
   .lib-filters{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
   .lib-chip{ background:oklch(0.95 0.012 75 / .05); border:1px solid var(--border); color:var(--muted);
@@ -357,7 +374,13 @@
   .wm-exit:hover{ border-color:var(--accent); }
   .wm-progress{ height:6px; background:oklch(0.95 0.012 75 / .10); border-radius:99px; overflow:hidden; margin-bottom:6px; }
   .wm-progress-fill{ height:100%; background:linear-gradient(90deg, oklch(0.64 0.15 325), oklch(0.72 0.13 350)); transition:width .25s; }
-  .wm-count{ font-size:.75rem; color:var(--muted); margin-bottom:14px; text-align:center; }
+  .wm-count{ font-size:.75rem; color:var(--muted); margin-bottom:10px; text-align:center; }
+  .wm-strip{ display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-bottom:16px; }
+  .wm-pip{ min-width:30px; height:30px; padding:0 6px; border-radius:9px; border:1px solid var(--border); background:oklch(0.95 0.012 75 / .04); color:var(--muted); font-family:inherit; font-size:.8rem; font-weight:700; cursor:pointer; }
+  .wm-pip.partial{ border-color:oklch(0.62 0.15 325 / .55); color:var(--text); background:oklch(0.62 0.15 325 / .16); }
+  .wm-pip.full{ background:linear-gradient(135deg, oklch(0.70 0.16 150), oklch(0.62 0.14 165)); border-color:transparent; color:#08210f; }
+  .wm-pip.current{ outline:2px solid var(--accent); outline-offset:1px; }
+  body.light .wm-pip{ background:#fff; }
   .wm-card{ background:var(--surface); border:1px solid var(--border); border-radius:18px; padding:22px 20px; box-shadow:var(--shadow); }
   .wm-tags{ display:flex; gap:6px; margin-bottom:8px; }
   .wm-tag{ font-size:.68rem; font-weight:800; text-transform:uppercase; letter-spacing:.05em;
@@ -582,7 +605,8 @@
     <button id="tabbtn-howto"      class="nav-item"        onclick="showTab('howto')"><span class="nav-ico">?</span> How to Use</button>
   </nav>
   <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙 Dark Mode</button>
-  <div class="sidebar-foot">Internal programming tool.<br>Plans you build here are for your clients only.</div>
+  <button class="theme-toggle" id="soundToggle" onclick="toggleSound()">🔊 <span>Timer sound: On</span></button>
+  <div class="sidebar-foot">Internal programming tool.<br>Plans you build here are for your clients only.<br><button onclick="showWhatsNew()" style="background:none;border:none;color:var(--accent);font:inherit;cursor:pointer;padding:4px 0 0;text-decoration:underline">What's new</button></div>
 </aside>
 
 <main class="main">
@@ -3907,6 +3931,27 @@ function wmTotalSets(){
   let n=0; (wmDay().rows||[]).forEach(r=>{ n+=Math.max(1,parseInt(r.sets,10)||1); });
   return n;
 }
+/* How many sets are ticked for one exercise, out of its target. */
+function wmExDone(i){
+  const row=(wmDay().rows||[])[i]; if(!row) return {done:0,total:0};
+  const total=Math.max(1,parseInt(row.sets,10)||1);
+  const map=wm.done[`${wm.dayIdx}-${i}`]||{};
+  const done=Object.values(map).filter(Boolean).length;
+  return {done:Math.min(done,total), total};
+}
+function wmJump(i){ wm.exIdx=i; stopRestTimer(); renderWorkoutMode(); }
+/* The at-a-glance strip: one pip per exercise, filled as its sets get done. */
+function wmExerciseStrip(){
+  const rows=wmDay().rows||[];
+  return rows.map((r,i)=>{
+    const {done,total}=wmExDone(i);
+    let cls="wm-pip";
+    if(done>=total) cls+=" full";
+    else if(done>0) cls+=" partial";
+    if(i===wm.exIdx) cls+=" current";
+    return `<button class="${cls}" title="${escapeHTML(r.name)} (${done}/${total} sets)" onclick="wmJump(${i})">${done>=total?"✓":(i+1)}</button>`;
+  }).join("");
+}
 function wmDoneSets(){
   let n=0;
   Object.keys(wm.done).forEach(k=>{ if(k.startsWith(wm.dayIdx+"-")) n+=Object.values(wm.done[k]).filter(Boolean).length; });
@@ -3937,7 +3982,8 @@ function renderWorkoutMode(){
     ? `<select class="wm-daysel" onchange="wmPickDay(this.value)">${days.map(x=>`<option value="${x.i}" ${x.i===wm.dayIdx?"selected":""}>${escapeHTML(dayTitleFor(x.d,x.i,vals,(wm.data.days||[]).length))}</option>`).join("")}</select>`
     : `<span class="wm-daylabel">${escapeHTML(title)}</span>`;
 
-  const pct=Math.round(((wm.exIdx)/rows.length)*100);
+  const totalSets=wmTotalSets(), doneSets=wmDoneSets();
+  const pct=totalSets?Math.round((doneSets/totalSets)*100):0;    // progress = sets done, not just position
   const last=lastTimeFor(row.name);
   const tech=(row.technique&&row.technique!=="—")?`<span class="wm-tag">${escapeHTML(row.technique)}</span>`:"";
   const grp=row.group?`<span class="wm-tag grp">${escapeHTML(row.group)}</span>`:"";
@@ -3950,7 +3996,8 @@ function renderWorkoutMode(){
     </div>
 
     <div class="wm-progress"><div class="wm-progress-fill" style="width:${pct}%"></div></div>
-    <div class="wm-count">Exercise ${wm.exIdx+1} of ${rows.length} · ${wmDoneSets()}/${wmTotalSets()} sets done</div>
+    <div class="wm-count">Exercise ${wm.exIdx+1} of ${rows.length} · ${doneSets}/${totalSets} sets done</div>
+    <div class="wm-strip">${wmExerciseStrip()}</div>
 
     <div class="wm-card">
       <div class="wm-tags">${grp}${tech}</div>
@@ -4840,30 +4887,88 @@ function markDayDone(btn){
 /* =========================================================================
    REST TIMER — tap the ⏱ on a row to count down that set's rest.
    ========================================================================= */
-let restInterval=null;
+let restInterval=null, restSec=0;
 function ensureRestTimer(){
   let el=document.getElementById("restTimer");
   if(!el){
     el=document.createElement("div"); el.id="restTimer"; el.className="rest-timer";
-    el.innerHTML=`<span class="rt-label">Rest</span><span class="rt-time">0:00</span><button class="rt-close" onclick="stopRestTimer()" title="Stop">✕</button>`;
+    el.innerHTML=`<span class="rt-label">Rest</span><span class="rt-time">0:00</span>`
+      + `<button class="rt-btn" onclick="addRestTime(30)" title="Add 30 seconds">+30s</button>`
+      + `<button class="rt-btn" onclick="skipRest()" title="Skip the rest and go">Skip</button>`
+      + `<button class="rt-close" onclick="stopRestTimer()" title="Stop">✕</button>`;
     document.body.appendChild(el);
   }
   return el;
 }
-function startRestTimer(str){
-  let sec=parseRestSec(str)||60;
-  const el=ensureRestTimer(); el.style.display="flex"; el.classList.remove("rt-done");
-  clearInterval(restInterval);
-  const time=el.querySelector(".rt-time");
-  const draw=()=>{ const m=Math.floor(sec/60), s=sec%60; time.textContent=`${m}:${String(s).padStart(2,"0")}`; };
-  draw();
-  restInterval=setInterval(()=>{
-    sec--;
-    if(sec<=0){ clearInterval(restInterval); time.textContent="Go!"; el.classList.add("rt-done"); try{ navigator.vibrate && navigator.vibrate(300); }catch(e){} setTimeout(()=>{ el.style.display="none"; el.classList.remove("rt-done"); },3000); return; }
-    draw();
-  },1000);
+function drawRest(){
+  const el=document.getElementById("restTimer"); if(!el) return;
+  const m=Math.floor(restSec/60), s=restSec%60;
+  el.querySelector(".rt-time").textContent=`${m}:${String(s).padStart(2,"0")}`;
 }
+function tickRest(){
+  clearInterval(restInterval);
+  restInterval=setInterval(()=>{ restSec--; if(restSec<=0){ restDone(); return; } drawRest(); },1000);
+}
+function startRestTimer(str){
+  restSec=parseRestSec(str)||60;
+  const el=ensureRestTimer(); el.style.display="flex"; el.classList.remove("rt-done");
+  primeAudio();                       // this call comes from a tap, so we can unlock sound now
+  drawRest(); tickRest();
+}
+function restDone(){
+  clearInterval(restInterval);
+  const el=document.getElementById("restTimer"); if(!el) return;
+  el.querySelector(".rt-time").textContent="Go!";
+  el.classList.add("rt-done");
+  restAlert();
+  setTimeout(()=>{ const e=document.getElementById("restTimer"); if(e && e.classList.contains("rt-done")){ e.style.display="none"; e.classList.remove("rt-done"); } },3000);
+}
+/* +30s works even after it's hit "Go!" — handy if you need a longer breather. */
+function addRestTime(n){
+  const el=document.getElementById("restTimer"); if(!el || el.style.display==="none") return;
+  el.classList.remove("rt-done");
+  restSec=Math.max(1, restSec+n);
+  drawRest(); tickRest();
+}
+function skipRest(){ restSec=0; restDone(); }
 function stopRestTimer(){ clearInterval(restInterval); const el=document.getElementById("restTimer"); if(el){ el.style.display="none"; el.classList.remove("rt-done"); } }
+
+/* Beep + buzz when rest is up. Web Audio, so it works offline with no sound file.
+   Mobile browsers only allow audio that started from a tap, so we "prime" the
+   audio context on the first timer start / sound-toggle (both are taps). */
+let soundOn = (function(){ try{ return localStorage.getItem("pt_sound")!=="off"; }catch(e){ return true; } })();
+let _audioCtx=null;
+function primeAudio(){
+  if(!soundOn) return;
+  try{ _audioCtx = _audioCtx || new (window.AudioContext||window.webkitAudioContext)(); if(_audioCtx.state==="suspended") _audioCtx.resume(); }catch(e){}
+}
+function beep(){
+  if(!soundOn || !_audioCtx) return;
+  try{
+    const ctx=_audioCtx;
+    [0,0.18].forEach((delay,i)=>{
+      const o=ctx.createOscillator(), g=ctx.createGain();
+      o.type="sine"; o.frequency.value=i?1050:780; o.connect(g); g.connect(ctx.destination);
+      const t=ctx.currentTime+delay;
+      g.gain.setValueAtTime(0.0001,t);
+      g.gain.exponentialRampToValueAtTime(0.35,t+0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001,t+0.16);
+      o.start(t); o.stop(t+0.17);
+    });
+  }catch(e){}
+}
+function restAlert(){ try{ navigator.vibrate && navigator.vibrate([200,80,200]); }catch(e){} beep(); }
+function toggleSound(){
+  soundOn=!soundOn;
+  try{ localStorage.setItem("pt_sound", soundOn?"on":"off"); }catch(e){}
+  if(soundOn){ primeAudio(); beep(); }     // instant feedback + unlocks audio on this tap
+  updateSoundBtn();
+  showToast(soundOn?"🔊 Timer sound on":"🔇 Timer sound off");
+}
+function updateSoundBtn(){
+  const b=document.getElementById("soundToggle");
+  if(b) b.innerHTML = soundOn ? "🔊 <span>Timer sound: On</span>" : "🔇 <span>Timer sound: Off</span>";
+}
 
 /* =========================================================================
    ROW SWAP MENU — the ⇄ on a row offers a few safe alternatives right there.
@@ -5120,7 +5225,7 @@ function renderSessions(){
    remembered weights, custom Dos & Don'ts sheets, all trackers, theme & color —
    every pt_* key, so nothing gets silently left behind. */
 const ALL_KEYS = ["pt_templates_v2","pt_dnd_sheets","pt_my_workout","pt_my_weights",
-  "pt_deload_streak","pt_last_workout_ex","pt_qs","pt_sheet_color","pt_theme","pt_templates_backup",
+  "pt_deload_streak","pt_last_workout_ex","pt_qs","pt_sheet_color","pt_theme","pt_templates_backup","pt_sound",
   "pt_tr_weight","pt_tr_pr","pt_tr_habit","pt_tr_pain","pt_tr_sessions","pt_tr_exlog"];
 function backupEverything(){
   const data={ _app:"chris-programming", _v:1, _date:new Date().toISOString(), store:{} };
@@ -5328,6 +5433,42 @@ function setSheetColor(c){
   showToast("🎨 Sheet color set");
 }
 
+/* =========================================================================
+   WHAT'S NEW — a one-time popup after an update so clients actually notice the
+   new stuff. Bump WHATS_NEW_VERSION + edit the list whenever we ship features.
+   Reopen any time from the "What's new" link in the sidebar footer.
+   ========================================================================= */
+const WHATS_NEW_VERSION = "2026-07-23";
+const WHATS_NEW = [
+  { icon:"▶", t:"Workout Mode", d:"A big, one-exercise-at-a-time view for while you train. Tap each set as you finish it." },
+  { icon:"⏱", t:"Smarter rest timer", d:"Now with +30s, Skip, and a beep when your rest is up." },
+  { icon:"📊", t:"“Last time” weights", d:"See what you lifted last time right under each exercise." },
+  { icon:"📖", t:"Gym Dictionary", d:"Look up any term on your program in plain English." },
+  { icon:"🔍", t:"Search the libraries", d:"Filter sessions and programs by body part, level, or equipment." },
+  { icon:"💾", t:"Autosave", d:"Your workout is saved as you go, so a refresh never loses it." }
+];
+function maybeShowWhatsNew(){
+  let seen=null; try{ seen=localStorage.getItem("pt_whatsnew"); }catch(e){}
+  if(seen!==WHATS_NEW_VERSION) showWhatsNew();
+}
+function showWhatsNew(){
+  let el=document.getElementById("whatsNew");
+  if(!el){ el=document.createElement("div"); el.id="whatsNew"; el.className="wn-overlay"; document.body.appendChild(el); }
+  el.innerHTML=`<div class="wn-card">
+    <button class="wn-x" onclick="closeWhatsNew()" title="Close">✕</button>
+    <div class="wn-badge">✨ What's new</div>
+    <h2 class="wn-title">A few new things to try</h2>
+    <div class="wn-list">${WHATS_NEW.map(x=>`<div class="wn-item"><span class="wn-ico">${x.icon}</span><div><strong>${escapeHTML(x.t)}</strong><div class="wn-d">${escapeHTML(x.d)}</div></div></div>`).join("")}</div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:6px" onclick="closeWhatsNew()">Got it</button>
+  </div>`;
+  el.style.display="flex";
+  el.onclick=e=>{ if(e.target===el) closeWhatsNew(); };   // click the backdrop to close
+}
+function closeWhatsNew(){
+  try{ localStorage.setItem("pt_whatsnew", WHATS_NEW_VERSION); }catch(e){}
+  const el=document.getElementById("whatsNew"); if(el) el.style.display="none";
+}
+
 /* Make the site installable to a phone/desktop home screen. The icon and web
    app manifest are drawn/built at runtime so the app remains one HTML file. */
 function setupPWA(){
@@ -5365,10 +5506,12 @@ renderSwapList();
 renderVideoList();
 refreshMyWorkoutButton();
 refreshResumeBanner();
+updateSoundBtn();
 toggleFrequency();
 loadQsAnswers();
 loadFromHash();
 setupPWA();
+maybeShowWhatsNew();
 applyTheme((function(){ try{ return localStorage.getItem("pt_theme")||"dark"; }catch(e){ return "dark"; } })());
 </script>
 </body>

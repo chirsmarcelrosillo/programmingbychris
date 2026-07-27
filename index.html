@@ -606,7 +606,7 @@
   </nav>
   <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙 Dark Mode</button>
   <button class="theme-toggle" id="soundToggle" onclick="toggleSound()">🔊 <span>Timer sound: On</span></button>
-  <div class="sidebar-foot">Internal programming tool.<br>Plans you build here are for your clients only.<br><button onclick="showWhatsNew()" style="background:none;border:none;color:var(--accent);font:inherit;cursor:pointer;padding:4px 0 0;text-decoration:underline">What's new</button></div>
+  <div class="sidebar-foot"><button onclick="showWhatsNew()" style="background:none;border:none;color:var(--accent);font:inherit;cursor:pointer;padding:0;text-decoration:underline">What's new</button></div>
 </aside>
 
 <main class="main">
@@ -748,6 +748,10 @@
           <label><input type="checkbox" value="pregnancy"><span>Pregnancy / Postpartum</span></label>
           <label><input type="checkbox" value="neck"><span>Neck</span></label>
           <label><input type="checkbox" value="osteoporosis"><span>Osteoporosis / Bone Density</span></label>
+          <label><input type="checkbox" value="sciatica"><span>Sciatica / Nerve</span></label>
+          <label><input type="checkbox" value="diabetes"><span>Diabetes</span></label>
+          <label><input type="checkbox" value="asthma"><span>Asthma</span></label>
+          <label><input type="checkbox" value="plantar_fasciitis"><span>Plantar Fasciitis</span></label>
           <label><input type="checkbox" value="none"><span>None</span></label>
         </div>
       </div>
@@ -890,6 +894,10 @@
           <label><input type="checkbox" value="pregnancy"><span>Pregnancy / Postpartum</span></label>
           <label><input type="checkbox" value="neck"><span>Neck</span></label>
           <label><input type="checkbox" value="osteoporosis"><span>Osteoporosis / Bone Density</span></label>
+          <label><input type="checkbox" value="sciatica"><span>Sciatica / Nerve</span></label>
+          <label><input type="checkbox" value="diabetes"><span>Diabetes</span></label>
+          <label><input type="checkbox" value="asthma"><span>Asthma</span></label>
+          <label><input type="checkbox" value="plantar_fasciitis"><span>Plantar Fasciitis</span></label>
           <label><input type="checkbox" value="none"><span>None</span></label>
         </div>
       </div>
@@ -1209,6 +1217,10 @@
         <label><input type="checkbox" value="pregnancy"><span>Pregnancy / Postpartum</span></label>
         <label><input type="checkbox" value="neck"><span>Neck</span></label>
         <label><input type="checkbox" value="osteoporosis"><span>Osteoporosis / Bone Density</span></label>
+        <label><input type="checkbox" value="sciatica"><span>Sciatica / Nerve</span></label>
+        <label><input type="checkbox" value="diabetes"><span>Diabetes</span></label>
+        <label><input type="checkbox" value="asthma"><span>Asthma</span></label>
+        <label><input type="checkbox" value="plantar_fasciitis"><span>Plantar Fasciitis</span></label>
       </div>
     </div>
 
@@ -1597,6 +1609,105 @@ const DOS_DONTS_SHEETS = {
       "Balance and posture work counts, keep it in.",
       "Progress slowly, bone takes its time.",
       "Any new back pain means stop and log it."
+    ]
+  },
+  sciatica: {
+    title: "Sciatica & Nerve Pain: Do's and Don'ts",
+    overview: "Sciatica is nerve pain that runs from the low back down through the glute and leg. The good news is that the right movement usually calms it down rather than stirring it up. We keep the spine neutral, avoid the positions that pinch the nerve, and build up the core and glutes that support the whole area. We move often, we just move smart. Sharp, shooting, or numb-and-tingly pain down the leg is always the signal to back off.",
+    dos: [
+      { what:"Keep the spine tall and neutral, and brace your core before every rep.", why:"A neutral, braced spine takes pressure off the nerve. This is the whole game with sciatica." },
+      { what:"Build the glutes and deep core with bridges, hip thrusts, bird dogs, and dead bugs.", why:"Strong glutes and a strong core support the low back and take the load off the irritated nerve." },
+      { what:"Favor supported and machine-based work, and hinge from the hips with a flat back.", why:"Support means less strain on the low back, and a proper hip hinge keeps the spine out of the danger zone." },
+      { what:"Keep gently moving and walking on the good days.", why:"Motion is lotion for a nerve. Sitting still for too long usually makes sciatica worse, not better." },
+      { what:"Find the positions that feel good and live there while it settles.", why:"Many people feel better slightly extended or standing. Work in your pain-free range and build from there." }
+    ],
+    donts: [
+      { what:"No rounding the low back under load, like toe-touch stretches or heavy sit-ups.", why:"Loaded forward rounding is the classic move that pinches the nerve and flares sciatica." },
+      { what:"Ease off heavy spinal compression like heavy squats and deadlifts while it's flared.", why:"Loading straight down on an irritated nerve is asking for trouble. Use supported and machine versions for now." },
+      { what:"No long sitting or slouched positions during the workout.", why:"Prolonged sitting and slouching are two of the biggest sciatica aggravators." },
+      { what:"Skip aggressive hamstring stretching and forcing the leg into the pain.", why:"Pulling on the nerve makes it angrier. Gentle nerve glides beat hard stretching every time." },
+      { what:"Don't push through sharp, shooting, or numb-and-tingly pain down the leg.", why:"That's the nerve talking. Back off, change position, and log it. This is not a 'work through it' pain." }
+    ],
+    rules: [
+      "Neutral, braced spine on every single rep.",
+      "Hinge from the hips, never round the low back under load.",
+      "Glute and deep-core strength is the long-term fix, keep it in.",
+      "Keep moving on good days, don't sit still for long.",
+      "Shooting pain, numbness, or tingling down the leg means stop and log it.",
+      "If it keeps flaring, loop in a doctor or physical therapist."
+    ]
+  },
+  diabetes: {
+    title: "Diabetes & Blood Sugar: Do's and Don'ts",
+    overview: "Exercise is one of the best tools there is for managing blood sugar, so this is about training consistently and safely. Strength and steady cardio both help your body use insulin better. We just keep an eye on your levels, keep snacks handy, and take good care of your feet. Nothing here should feel scary, it's simple stuff that keeps you safe while you get stronger.",
+    dos: [
+      { what:"Check your blood sugar before and after training, especially early on.", why:"It helps you learn how your body responds so we can adjust snacks and timing." },
+      { what:"Keep a fast-acting carb nearby, like juice or glucose tabs.", why:"If your sugar drops during a session, you can treat it right away." },
+      { what:"Eat a small snack beforehand if you tend to run low.", why:"Training on an empty tank can drop your sugar too far." },
+      { what:"Wear good shoes and check your feet after workouts.", why:"Diabetes can dull the feeling in your feet, so we stay on top of blisters and hot spots before they become a problem." },
+      { what:"Mix in both strength work and steady cardio.", why:"Both improve how your body handles blood sugar, and together they work even better." }
+    ],
+    donts: [
+      { what:"Don't train if your sugar is very high or very low, treat it first.", why:"Exercising at the extremes can make things worse. Get back into range, then train." },
+      { what:"Don't skip meals around your workout.", why:"Skipping food plus exercise is the fastest way to a low." },
+      { what:"Don't ignore shakiness, sweating, dizziness, or confusion.", why:"Those are classic low-blood-sugar signs. Stop and treat them right away." },
+      { what:"Don't train in worn-out shoes or barefoot.", why:"Protecting your feet matters more with diabetes than almost anything else." }
+    ],
+    rules: [
+      "Check your sugar before and after, keep carbs on hand.",
+      "Treat a high or low first, then decide about training.",
+      "Shaky, sweaty, dizzy, or confused means stop and treat it.",
+      "Look after your feet, good shoes and a quick check after.",
+      "Consistency is the real medicine here, little and often beats all-or-nothing.",
+      "Work with your doctor on medication and timing."
+    ]
+  },
+  asthma: {
+    title: "Asthma & Breathing: Do's and Don'ts",
+    overview: "Having asthma doesn't mean you can't train hard, it just means we're smart about how we build up. A longer warm-up, steadier pacing, and your inhaler on hand let you get all the benefits without triggering an attack. Exercise actually makes your lungs and heart stronger over time. We just ramp in gradually and always keep your rescue inhaler close.",
+    dos: [
+      { what:"Keep your rescue inhaler with you every single session.", why:"If your chest tightens up, you can act on it immediately." },
+      { what:"Take a longer, gradual warm-up.", why:"Easing in warms the airways and greatly cuts the chance of exercise-induced wheezing." },
+      { what:"Breathe in through the nose and out through the mouth when you can.", why:"Nasal breathing warms and humidifies the air, which is gentler on sensitive airways." },
+      { what:"Take generous rests and build your conditioning gradually.", why:"Steady progress lets your lungs adapt without getting overwhelmed." },
+      { what:"Be extra careful in cold, dry, or high-pollen conditions.", why:"Those are common triggers. Indoors or a mask on cold days can make a big difference." }
+    ],
+    donts: [
+      { what:"Don't jump straight into all-out intervals cold.", why:"A sudden hard burst on cold airways is the classic trigger for exercise-induced asthma." },
+      { what:"Don't train through chest tightness, wheezing, or a nagging cough.", why:"Those are early warning signs. Stop, use your inhaler, and rest before deciding to continue." },
+      { what:"Don't leave the inhaler in the car or at home.", why:"It only helps if it's within reach when you need it." },
+      { what:"Don't push conditioning harder on a day your breathing already feels off.", why:"Some days your lungs are more reactive. Respect that and keep it easy." }
+    ],
+    rules: [
+      "Rescue inhaler on hand, always.",
+      "Long, gradual warm-up before anything intense.",
+      "Chest tightness, wheeze, or a cough means stop and use the inhaler.",
+      "Ramp conditioning up slowly over weeks, not in one session.",
+      "Mind the cold and the pollen, adjust when needed.",
+      "Keep your doctor in the loop on your action plan."
+    ]
+  },
+  plantar_fasciitis: {
+    title: "Plantar Fasciitis & Foot Pain: Do's and Don'ts",
+    overview: "Plantar fasciitis is that sharp heel or arch pain, often worst on the first steps of the day. We can absolutely keep training legs and everything else, we just take the pounding out and keep you supported while the foot calms down. Load the muscles without hammering the sore tissue, and it usually settles with time and smart work.",
+    dos: [
+      { what:"Keep both feet planted with seated and supported leg work.", why:"You load the legs hard without any impact through the sore heel and arch." },
+      { what:"Wear supportive shoes for training, never barefoot on hard floors.", why:"Good support takes strain off the plantar fascia while it heals." },
+      { what:"Use low-impact cardio like the bike or the recumbent bike.", why:"You keep your conditioning without pounding the foot." },
+      { what:"Gently warm up and mobilize the calves and ankles.", why:"Tight calves pull on the plantar fascia, so loosening them up helps take the tension off." }
+    ],
+    donts: [
+      { what:"No running, jumping, or hopping while it's flared.", why:"Impact drives straight into the exact tissue that's inflamed." },
+      { what:"Ease off standing calf raises and long standing holds if they bite.", why:"Full weight through the ball of the foot can aggravate it. Use a seated calf raise instead." },
+      { what:"Don't train barefoot or in flat, unsupportive shoes.", why:"No support means more pull on the sore fascia with every step." },
+      { what:"Don't push through sharp heel or arch pain to finish a set.", why:"Sharp foot pain means back off, not tough it out." }
+    ],
+    rules: [
+      "Both feet planted and supported while it settles.",
+      "No impact, no jumping, no running for now.",
+      "Supportive shoes on, never barefoot on hard floors.",
+      "Keep the calves and ankles loose to take the tension off.",
+      "Sharp heel or arch pain means stop and log it."
     ]
   }
 };
@@ -2273,6 +2384,62 @@ const SESSION_LIBRARY = [
     ]
   },
 
+  /* ---- CORE-FOCUSED SESSIONS ---- */
+  {
+    id:"beginner-core", title:"Beginner Core (Easy)", focusLabel:"Core", facility:"any", intensity:"light", goal:"general",
+    notes:"An easy intro to core work. It's all about bracing and breathing, not speed. A few quality reps beat a lot of sloppy ones here.",
+    rows:[
+      { group:"A", name:"Dead Bug", sets:2, reps:"8 ea", tempo:"Slow", rest:"40s", technique:"—" },
+      { group:"B", name:"Bird Dog", sets:2, reps:"8 ea", tempo:"Slow", rest:"40s", technique:"—" },
+      { group:"C", name:"Plank", sets:3, reps:"20–30s", tempo:"Hold", rest:"40s", technique:"—" },
+      { group:"D", name:"Side Plank", sets:2, reps:"15–20s ea", tempo:"Hold", rest:"40s", technique:"—" },
+      { group:"E", name:"Glute Bridge", sets:2, reps:"12–15", tempo:"Controlled", rest:"40s", technique:"—" }
+    ]
+  },
+  {
+    id:"core-circuit", title:"Core Circuit", focusLabel:"Core", facility:"any", intensity:"moderate", goal:"toning",
+    notes:"A rounded core session hitting the front, the sides and the deep core. Move through it with control and keep the midsection braced the whole time.",
+    rows:[
+      { group:"A", name:"Hanging Knee Raise", sets:3, reps:"10–15", tempo:"Controlled", rest:"45s", technique:"—" },
+      { group:"B", name:"Plank", sets:3, reps:"30–45s", tempo:"Hold", rest:"40s", technique:"—" },
+      { group:"C", name:"Bicycle Crunch", sets:3, reps:"15–20", tempo:"Controlled", rest:"40s", technique:"—" },
+      { group:"D", name:"Side Plank", sets:3, reps:"20–30s ea", tempo:"Hold", rest:"40s", technique:"—" },
+      { group:"E", name:"Dead Bug", sets:3, reps:"10 ea", tempo:"Slow", rest:"40s", technique:"—" }
+    ]
+  },
+  {
+    id:"core-crusher", title:"Core Crusher", focusLabel:"Core", facility:"VASA", intensity:"hard", goal:"strength",
+    notes:"A tougher core day. Fight to keep every rep strict, no swinging and no rushing. The last couple reps of each set should be a real grind.",
+    rows:[
+      { group:"A", name:"Hanging Leg Raise", sets:4, reps:"10–15", tempo:"Controlled", rest:"60s", technique:"—" },
+      { group:"B", name:"Weighted Decline Sit-Up", sets:3, reps:"10–12", tempo:"3s down", rest:"60s", technique:"—" },
+      { group:"C", name:"V-Up", sets:3, reps:"10–15", tempo:"Controlled", rest:"45s", technique:"—" },
+      { group:"D1", name:"Side Plank", sets:3, reps:"30–40s ea", tempo:"Hold", rest:"30s", technique:"Superset" },
+      { group:"D2", name:"V-Hold (Hollow Hold)", sets:3, reps:"20–30s", tempo:"Hold", rest:"45s", technique:"Superset" }
+    ]
+  },
+  {
+    id:"standing-core", title:"Standing Core (No Floor)", focusLabel:"Core (no floor)", facility:"CIH", intensity:"light", goal:"toning",
+    notes:"A full core session with nothing on the floor, so it's easy on the knees, hips and back. Great for anyone who struggles getting up and down. Brace hard and move with control.",
+    rows:[
+      { group:"A", name:"Suitcase Carry", sets:3, reps:"30–40s ea", tempo:"Steady", rest:"45s", technique:"—" },
+      { group:"B", name:"Standing Banded Woodchop", sets:3, reps:"12–15 ea", tempo:"Controlled", rest:"40s", technique:"—" },
+      { group:"C", name:"Standing Side Bend", sets:3, reps:"12–15 ea", tempo:"Controlled", rest:"40s", technique:"—" },
+      { group:"D", name:"Seated Core March (Bench)", sets:3, reps:"30–45s", tempo:"Controlled", rest:"40s", technique:"—" }
+    ]
+  },
+  {
+    id:"rotational-core", title:"Oblique & Rotational Core", focusLabel:"Core (obliques)", facility:"any", intensity:"moderate", goal:"toning",
+    notes:"Focused on the sides and rotation. Control the twist, don't fling it. Squeeze the obliques on every rep and keep the hips steady.",
+    rows:[
+      { group:"A", name:"Standing Banded Woodchop", sets:3, reps:"12–15 ea", tempo:"Controlled", rest:"40s", technique:"—" },
+      { group:"B", name:"Side Plank", sets:3, reps:"25–35s ea", tempo:"Hold", rest:"40s", technique:"—" },
+      { group:"C", name:"Bicycle Crunch", sets:3, reps:"15–20", tempo:"Controlled", rest:"40s", technique:"—" },
+      { group:"D", name:"Suitcase Carry", sets:3, reps:"30–40s ea", tempo:"Steady", rest:"45s", technique:"—" },
+      { group:"E", name:"Standing Side Bend", sets:2, reps:"12–15 ea", tempo:"Controlled", rest:"40s", technique:"—" }
+    ]
+  },
+
   {
     id:"warmup-full", title:"Warm-Up: Full Body", focusLabel:"Warm-Up", facility:"any", intensity:"light", goal:"mobility", kind:"warmup",
     notes:"Run through this before any full-body or mixed session. Easy and controlled — wake the body up, don't fatigue it.",
@@ -2776,11 +2943,15 @@ const CONDITION_FLAGS = {
   vascular_bp:"Vascular / BP flagged (hypertension, FMD, renal) — keep loads LIGHT (≈20 lb cap), RPE ≤ 6 (leave 4+ reps in the tank). NO breath-holding: exhale on exertion, never bear down (no Valsalva). HIIT is replaced with low-impact steady conditioning. Stop at any dizziness, headache, or chest pressure.",
   pregnancy:"Pregnancy / Postpartum flagged — doctor or midwife has the final say. Keep it lighter, breathe out on effort (never bear down), and skip crunches, hard ab flexion, jumping, and long sets lying flat on your back. Standing and bench work is your friend. Stop for any dizziness, leaking, belly coning, or pain.",
   neck:"Neck flagged — keep the head neutral and tall, skip heavy shrugs, upright rows, and heavy bar-on-neck squats. Use chest-supported and machine work and keep shoulder raises light and strict. Stop for any sharp pain or anything shooting down the arm. See the attached Neck sheet.",
-  osteoporosis:"Bone density / osteoporosis flagged — keep the spine neutral and braced, NO loaded spinal flexion (heavy sit-ups, toe-touch crunches) or loaded twisting, and no impact. Build strength steadily and hinge-and-brace to lift anything off the floor. See the attached Bone Health sheet."
+  osteoporosis:"Bone density / osteoporosis flagged — keep the spine neutral and braced, NO loaded spinal flexion (heavy sit-ups, toe-touch crunches) or loaded twisting, and no impact. Build strength steadily and hinge-and-brace to lift anything off the floor. See the attached Bone Health sheet.",
+  sciatica:"Sciatica / nerve pain flagged — keep the spine neutral and braced, NO loaded rounding of the low back (heavy sit-ups, toe-touch stretches) and ease off heavy squats/deadlifts while flared. Build glutes and deep core, and hinge from the hips. Stop for any sharp, shooting, or numb-and-tingly pain down the leg. See the attached Sciatica sheet.",
+  diabetes:"Diabetes flagged — check blood sugar before and after, keep a fast-acting carb (juice, glucose tabs) on hand, and don't train at very high or very low sugar. Watch for shakiness, sweating, dizziness, or confusion and treat it right away. Good shoes; check the feet after. See the attached Diabetes sheet.",
+  asthma:"Asthma flagged — rescue inhaler on hand every session, a longer gradual warm-up, and no all-out intervals cold. Stop for chest tightness, wheezing, or a nagging cough and use the inhaler. High-impact bursts are kept out. See the attached Asthma sheet.",
+  plantar_fasciitis:"Plantar fasciitis flagged — keep both feet planted with seated/supported leg work, NO jumping or running, and supportive shoes (never barefoot). Keep the calves loose. Stop for sharp heel or arch pain. See the attached Plantar Fasciitis sheet."
 };
 
 /* A selected condition auto-attaches its matching Dos & Don'ts sheet. */
-const CONDITION_SHEET = { arthritis:"arthritis", vascular_bp:"vascular_bp", knee:"knee", shoulder:"shoulder", lower_back:"lower_back", pregnancy:"pregnancy", hip:"hip", wrist_elbow:"wrist_elbow", foot_ankle:"foot_ankle", cardiovascular:"cardiovascular", neck:"neck", osteoporosis:"osteoporosis" };
+const CONDITION_SHEET = { arthritis:"arthritis", vascular_bp:"vascular_bp", knee:"knee", shoulder:"shoulder", lower_back:"lower_back", pregnancy:"pregnancy", hip:"hip", wrist_elbow:"wrist_elbow", foot_ankle:"foot_ankle", cardiovascular:"cardiovascular", neck:"neck", osteoporosis:"osteoporosis", sciatica:"sciatica", diabetes:"diabetes", asthma:"asthma", plantar_fasciitis:"plantar_fasciitis" };
 
 /* =========================================================================
    CUSTOM ADJUSTMENTS
@@ -2793,16 +2964,20 @@ const CONDITION_SHEET = { arthritis:"arthritis", vascular_bp:"vascular_bp", knee
 const ADJUST_KEYWORDS = [
   { cond:"knee",           re:/\b(knee|knees|acl|mcl|meniscus|patella\w*)\b/i },
   { cond:"shoulder",       re:/(\bshoulders?\b|rotator\s*cuff|\blabrum\b|\bac\s*joint\b)/i },
-  { cond:"lower_back",     re:/(lower\s*back|low\s*back|lumbar|back\s*pain|sore\s*back|bad\s*back|herniat\w*|bulging\s*disc|sciatic\w*|si\s*joint)/i },
+  { cond:"lower_back",     re:/(lower\s*back|low\s*back|lumbar|back\s*pain|sore\s*back|bad\s*back|herniat\w*|bulging\s*disc|si\s*joint)/i },
   { cond:"hip",            re:/(\bhips?\b|\bgroin\b|adductor\w*|hip\s*flexor\w*)/i },
   { cond:"wrist_elbow",    re:/(\bwrists?\b|\belbows?\b|carpal|tennis\s*elbow|golfer'?s\s*elbow|forearm\w*)/i },
-  { cond:"foot_ankle",     re:/(\bankles?\b|\bfoot\b|\bfeet\b|plantar\w*|achilles|\bheel\b|shin\s*splint\w*)/i },
+  { cond:"foot_ankle",     re:/(\bankles?\b|\bfoot\b|\bfeet\b|achilles|\bheel\b|shin\s*splint\w*)/i },
+  { cond:"plantar_fasciitis", re:/(plantar\w*|heel\s*spur|fasciit\w*)/i },
   { cond:"arthritis",      re:/(arthrit\w*|osteoarthrit\w*|joint\s*pain|achy\s*joints)/i },
   { cond:"pregnancy",      re:/(pregnan\w*|post\s*-?\s*partum|prenatal|expecting|diastasis)/i },
   { cond:"vascular_bp",    re:/(blood\s*pressure|hypertens\w*|\bhigh\s*bp\b|\bbp\b|vascular|\bfmd\b|kidney|renal)/i },
-  { cond:"cardiovascular", re:/(\bheart\b|cardiac|\bcopd\b|asthma|emphysema)/i },
+  { cond:"cardiovascular", re:/(\bheart\b|cardiac|\bcopd\b|emphysema)/i },
+  { cond:"asthma",         re:/(asthma|wheez\w*|inhaler|exercise[-\s]*induced)/i },
   { cond:"neck",           re:/(\bneck\b|cervical|whiplash)/i },
-  { cond:"osteoporosis",   re:/(osteoporo\w*|osteopenia|bone\s*density|brittle\s*bones?)/i }
+  { cond:"osteoporosis",   re:/(osteoporo\w*|osteopenia|bone\s*density|brittle\s*bones?)/i },
+  { cond:"sciatica",       re:/(sciatic\w*|nerve\s*pain|pinched\s*nerve|shooting\s*(pain|down\s*(the\s*)?leg))/i },
+  { cond:"diabetes",       re:/(diabet\w*|blood\s*sugar|glucose|insulin|hypoglyc\w*)/i }
 ];
 /* Read the free-text box and return the conditions it implies. */
 function parseAdjustments(text){
@@ -3222,16 +3397,18 @@ function validPool(facility, conditions){
   const conds = conditions || [];
   const arthritis = conds.includes("arthritis");
   const osteo     = conds.includes("osteoporosis");
-  const noImpact  = conds.includes("foot_ankle") || conds.includes("vascular_bp") || conds.includes("pregnancy") || conds.includes("cardiovascular") || osteo;
-  const noStep    = conds.includes("foot_ankle");
+  const sciatica  = conds.includes("sciatica");
+  const noImpact  = conds.includes("foot_ankle") || conds.includes("vascular_bp") || conds.includes("pregnancy") || conds.includes("cardiovascular") || conds.includes("asthma") || conds.includes("plantar_fasciitis") || osteo;
+  const noStep    = conds.includes("foot_ankle") || conds.includes("plantar_fasciitis");
   const preg      = conds.includes("pregnancy");
   return EXERCISES.filter(ex => {
     if(!allowed.includes(ex.equipment)) return false;
     if(arthritis && !ARTHRITIS_SAFE.has(ex.name)) return false;  // arthritis = vetted allow-list only
-    if(noImpact && IMPACT_MOVES.has(ex.name)) return false;      // no jumping for foot/ankle + vascular + cardio + pregnancy + osteo
-    if(noStep && STEP_MOVES.has(ex.name)) return false;          // no step-ups for foot/ankle
+    if(noImpact && IMPACT_MOVES.has(ex.name)) return false;      // no jumping for foot/ankle + vascular + cardio + asthma + plantar + pregnancy + osteo
+    if(noStep && STEP_MOVES.has(ex.name)) return false;          // no step-ups for foot/ankle + plantar fasciitis
     if(preg && PREGNANCY_UNSAFE.has(ex.name)) return false;      // pregnancy: skip hard flexion/prone/ballistic
     if(osteo && SPINE_FLEXION_MOVES.has(ex.name)) return false;  // osteoporosis: no loaded spinal flexion / rotation
+    if(sciatica && ((ex.conditions||[]).includes("lower_back") || SPINE_FLEXION_MOVES.has(ex.name))) return false;  // sciatica: protect the low back / nerve
     for(const c of conds){ if((ex.conditions||[]).includes(c)) return false; }
     return true;
   });
@@ -4893,7 +5070,7 @@ function ensureRestTimer(){
   if(!el){
     el=document.createElement("div"); el.id="restTimer"; el.className="rest-timer";
     el.innerHTML=`<span class="rt-label">Rest</span><span class="rt-time">0:00</span>`
-      + `<button class="rt-btn" onclick="addRestTime(30)" title="Add 30 seconds">+30s</button>`
+      + `<button class="rt-btn" onclick="addRestTime(15)" title="Add 15 seconds">+15s</button>`
       + `<button class="rt-btn" onclick="skipRest()" title="Skip the rest and go">Skip</button>`
       + `<button class="rt-close" onclick="stopRestTimer()" title="Stop">✕</button>`;
     document.body.appendChild(el);

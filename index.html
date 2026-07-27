@@ -199,6 +199,9 @@
   .nav-item.active{ background:oklch(0.62 0.15 325 / .16); color:var(--text); box-shadow:inset 0 0 0 1px oklch(0.62 0.15 325 / .30); }
   .nav-ico{ font-size:1.02rem; opacity:.9; width:18px; text-align:center; }
   .sidebar-foot{ margin-top:auto; font-size:.7rem; line-height:1.5; color:var(--muted); padding:14px 10px 0; border-top:1px solid var(--border); }
+  .foot-links{ display:flex; flex-direction:column; gap:6px; align-items:flex-start; }
+  .foot-links button{ background:none; border:none; color:var(--accent); font:inherit; font-size:.8rem; cursor:pointer; padding:0; text-decoration:none; }
+  .foot-links button:hover{ text-decoration:underline; }
   .main{ flex:1; min-width:0; }
   .app-body{ max-width:1320px; margin:0; padding:30px 34px 70px; gap:30px; grid-template-columns:360px 1fr; }
   @media (max-width:900px){
@@ -606,7 +609,11 @@
   </nav>
   <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙 Dark Mode</button>
   <button class="theme-toggle" id="soundToggle" onclick="toggleSound()">🔊 <span>Timer sound: On</span></button>
-  <div class="sidebar-foot"><button onclick="showWhatsNew()" style="background:none;border:none;color:var(--accent);font:inherit;cursor:pointer;padding:0;text-decoration:underline">What's new</button></div>
+  <div class="sidebar-foot foot-links">
+    <button onclick="sendFeedback()">💬 Send feedback</button>
+    <button onclick="showWhatsNew()">What's new</button>
+    <button onclick="showWelcome()">Quick tour</button>
+  </div>
 </aside>
 
 <main class="main">
@@ -752,6 +759,8 @@
           <label><input type="checkbox" value="diabetes"><span>Diabetes</span></label>
           <label><input type="checkbox" value="asthma"><span>Asthma</span></label>
           <label><input type="checkbox" value="plantar_fasciitis"><span>Plantar Fasciitis</span></label>
+          <label><input type="checkbox" value="fibromyalgia"><span>Fibromyalgia / Chronic Pain</span></label>
+          <label><input type="checkbox" value="post_surgery"><span>Post-Surgery / Injury Return</span></label>
           <label><input type="checkbox" value="none"><span>None</span></label>
         </div>
       </div>
@@ -898,6 +907,8 @@
           <label><input type="checkbox" value="diabetes"><span>Diabetes</span></label>
           <label><input type="checkbox" value="asthma"><span>Asthma</span></label>
           <label><input type="checkbox" value="plantar_fasciitis"><span>Plantar Fasciitis</span></label>
+          <label><input type="checkbox" value="fibromyalgia"><span>Fibromyalgia / Chronic Pain</span></label>
+          <label><input type="checkbox" value="post_surgery"><span>Post-Surgery / Injury Return</span></label>
           <label><input type="checkbox" value="none"><span>None</span></label>
         </div>
       </div>
@@ -919,7 +930,7 @@
     <!-- ============ TAB: SESSION LIBRARY ============ -->
     <div class="card" id="panel-library" style="display:none">
       <h2>Session Library</h2>
-      <p style="font-size:.82rem;color:var(--muted);margin-bottom:8px">Ready-made single sessions — pull one up instantly, then edit and share. Add your own in the <code>SESSION_LIBRARY</code> config.</p>
+      <p style="font-size:.82rem;color:var(--muted);margin-bottom:8px">Ready-made workouts you can pull up instantly. Search or filter to find one, tap it to load it, then tweak anything you like.</p>
       <div class="field"><label>Client Name (optional)</label><input type="text" id="libClientName" placeholder="First name"></div>
       <input type="text" id="libSearch" placeholder="Search sessions… (e.g. legs, glutes, bench)" oninput="renderLibraryList()" style="margin-bottom:8px">
       <div class="lib-filters">
@@ -982,7 +993,7 @@
     <!-- ============ SHARED: DOS & DON'TS SHEETS ============ -->
     <div class="card">
       <h2>Dos &amp; Don'ts Sheets</h2>
-      <p style="font-size:.82rem;color:var(--muted);margin-bottom:12px">Reference pages that attach to a printed/shared program. Built-ins live in <code>DOS_DONTS_SHEETS</code>.</p>
+      <p style="font-size:.82rem;color:var(--muted);margin-bottom:12px">Handy safety guides that print right onto a program. Tick one to attach it, or add your own below.</p>
       <ul class="dnd-list" id="dndSheetList"></ul>
       <div class="btn-row" style="margin-top:12px"><button class="btn btn-secondary btn-sm" onclick="toggleCustomSheetForm()">+ Add Custom Sheet</button></div>
       <div class="sheet-form" id="customSheetForm" style="display:none">
@@ -1221,6 +1232,8 @@
         <label><input type="checkbox" value="diabetes"><span>Diabetes</span></label>
         <label><input type="checkbox" value="asthma"><span>Asthma</span></label>
         <label><input type="checkbox" value="plantar_fasciitis"><span>Plantar Fasciitis</span></label>
+        <label><input type="checkbox" value="fibromyalgia"><span>Fibromyalgia / Chronic Pain</span></label>
+        <label><input type="checkbox" value="post_surgery"><span>Post-Surgery / Injury Return</span></label>
       </div>
     </div>
 
@@ -1708,6 +1721,56 @@ const DOS_DONTS_SHEETS = {
       "Supportive shoes on, never barefoot on hard floors.",
       "Keep the calves and ankles loose to take the tension off.",
       "Sharp heel or arch pain means stop and log it."
+    ]
+  },
+  fibromyalgia: {
+    title: "Fibromyalgia & Chronic Pain: Do's and Don'ts",
+    overview: "Training with fibromyalgia or chronic pain is all about pacing. Done right, gentle strength and movement actually reduce pain and fatigue over time. Done too hard, it triggers a flare that costs you days. So we start small, build slowly, and treat consistency as the win. Some days you'll do less than planned and that is completely fine. Showing up gently beats going hard and crashing, every single time.",
+    dos: [
+      { what:"Start well below what you think you can do, and add a little at a time.", why:"The number one cause of a flare is doing too much too soon. Under-doing it early builds a base you can grow from." },
+      { what:"Warm up longer and ease into everything.", why:"Stiff, sensitive muscles need more time to feel ready. A slow start prevents a lot of soreness." },
+      { what:"Keep sessions shorter and more frequent rather than long and hard.", why:"Little and often is far kinder to fibro than one big grind, and it adds up to more over a week." },
+      { what:"Rest plenty between sets and breathe.", why:"There's no rush. Generous rests keep the nervous system calm and the pain down." },
+      { what:"Adjust to how you feel that day, and count showing up as a win.", why:"Energy and pain swing a lot with fibro. Flexibility keeps you consistent instead of all-or-nothing." }
+    ],
+    donts: [
+      { what:"Don't chase 'no pain no gain' or push into a flare.", why:"With chronic pain that mindset backfires and can cost you days of recovery." },
+      { what:"Don't jump from an easy week straight to a hard one.", why:"Big spikes in effort are the classic flare trigger. Step it up gently." },
+      { what:"Don't train hard on a high-pain or high-fatigue day.", why:"Some days call for gentle movement or rest, and that's the smart choice, not a failure." },
+      { what:"Don't compare your progress to anyone else's timeline.", why:"Your pace is your pace. Slow and steady genuinely wins here." }
+    ],
+    rules: [
+      "Pacing is everything, start low and build slow.",
+      "Longer warm-ups, generous rests, keep breathing.",
+      "Little and often beats one big hard session.",
+      "Adjust to the day, showing up gently always counts.",
+      "A flare means back off and rest, not push through.",
+      "Work with your doctor on the bigger picture."
+    ]
+  },
+  post_surgery: {
+    title: "Returning After Surgery or Injury: Do's and Don'ts",
+    overview: "Coming back from a surgery or a significant injury is one of the most rewarding things to train through, and also the one where we're the most careful. The single most important rule: your surgeon or physical therapist sets the restrictions, and we follow them to the letter. This sheet is a general guide, not medical clearance. Once you're cleared, we rebuild patiently, starting light and earning each step up. Sharp pain, swelling, or anything that feels wrong is always a stop.",
+    dos: [
+      { what:"Get clearance from your surgeon or physical therapist first, and follow their specific limits.", why:"They know exactly what your body needs to protect right now. Their rules always beat any general plan." },
+      { what:"Start much lighter than feels necessary and rebuild gradually.", why:"Tissue needs time to handle load again. Starting easy is how you come back for good instead of getting re-injured." },
+      { what:"Work the rest of the body while the healing area rests.", why:"You can train around most injuries and keep your fitness up while one part recovers." },
+      { what:"Focus on full, pain-free range and quality reps over weight.", why:"Rebuilding clean movement first is what makes the strength you add later safe." },
+      { what:"Keep any prescribed rehab exercises in the plan.", why:"Those are doing the real repair work. We build strength around them, not instead of them." }
+    ],
+    donts: [
+      { what:"Don't exceed the restrictions your medical team gave you, even if you feel great.", why:"Feeling good doesn't mean the tissue is fully healed underneath. Restrictions exist for a reason." },
+      { what:"Don't rush back to your old weights.", why:"Ego lifting after time off is how people re-injure. Earn it back rep by rep." },
+      { what:"Don't push through sharp pain, swelling, or a hot, tender joint.", why:"Those are signs the area isn't ready. Stop and check in with your medical team." },
+      { what:"Don't skip the warm-up or the rehab work.", why:"Both are protecting the exact area we're trying to bring back." }
+    ],
+    rules: [
+      "Your surgeon or physical therapist has the final say, always.",
+      "This is a general guide, not medical clearance.",
+      "Start light, rebuild patiently, earn each step up.",
+      "Train around the injury to keep the rest of you strong.",
+      "Sharp pain, swelling, or heat means stop and check in.",
+      "Keep the prescribed rehab work in the plan."
     ]
   }
 };
@@ -2947,11 +3010,13 @@ const CONDITION_FLAGS = {
   sciatica:"Sciatica / nerve pain flagged — keep the spine neutral and braced, NO loaded rounding of the low back (heavy sit-ups, toe-touch stretches) and ease off heavy squats/deadlifts while flared. Build glutes and deep core, and hinge from the hips. Stop for any sharp, shooting, or numb-and-tingly pain down the leg. See the attached Sciatica sheet.",
   diabetes:"Diabetes flagged — check blood sugar before and after, keep a fast-acting carb (juice, glucose tabs) on hand, and don't train at very high or very low sugar. Watch for shakiness, sweating, dizziness, or confusion and treat it right away. Good shoes; check the feet after. See the attached Diabetes sheet.",
   asthma:"Asthma flagged — rescue inhaler on hand every session, a longer gradual warm-up, and no all-out intervals cold. Stop for chest tightness, wheezing, or a nagging cough and use the inhaler. High-impact bursts are kept out. See the attached Asthma sheet.",
-  plantar_fasciitis:"Plantar fasciitis flagged — keep both feet planted with seated/supported leg work, NO jumping or running, and supportive shoes (never barefoot). Keep the calves loose. Stop for sharp heel or arch pain. See the attached Plantar Fasciitis sheet."
+  plantar_fasciitis:"Plantar fasciitis flagged — keep both feet planted with seated/supported leg work, NO jumping or running, and supportive shoes (never barefoot). Keep the calves loose. Stop for sharp heel or arch pain. See the attached Plantar Fasciitis sheet.",
+  fibromyalgia:"Fibromyalgia / chronic pain flagged — pace it. Start well below capacity and build slowly, longer warm-ups, generous rests, shorter and more frequent over long and hard. No impact. Adjust to the day and count showing up as a win; a flare means back off, not push through. See the attached Fibromyalgia sheet.",
+  post_surgery:"Post-surgery / injury return flagged — your surgeon or physical therapist sets the restrictions and we follow them exactly (this is a general guide, not clearance). Start much lighter than feels needed, rebuild gradually, keep any prescribed rehab in. Stop for sharp pain, swelling, or heat. See the attached Return-to-Training sheet."
 };
 
 /* A selected condition auto-attaches its matching Dos & Don'ts sheet. */
-const CONDITION_SHEET = { arthritis:"arthritis", vascular_bp:"vascular_bp", knee:"knee", shoulder:"shoulder", lower_back:"lower_back", pregnancy:"pregnancy", hip:"hip", wrist_elbow:"wrist_elbow", foot_ankle:"foot_ankle", cardiovascular:"cardiovascular", neck:"neck", osteoporosis:"osteoporosis", sciatica:"sciatica", diabetes:"diabetes", asthma:"asthma", plantar_fasciitis:"plantar_fasciitis" };
+const CONDITION_SHEET = { arthritis:"arthritis", vascular_bp:"vascular_bp", knee:"knee", shoulder:"shoulder", lower_back:"lower_back", pregnancy:"pregnancy", hip:"hip", wrist_elbow:"wrist_elbow", foot_ankle:"foot_ankle", cardiovascular:"cardiovascular", neck:"neck", osteoporosis:"osteoporosis", sciatica:"sciatica", diabetes:"diabetes", asthma:"asthma", plantar_fasciitis:"plantar_fasciitis", fibromyalgia:"fibromyalgia", post_surgery:"post_surgery" };
 
 /* =========================================================================
    CUSTOM ADJUSTMENTS
@@ -2977,7 +3042,9 @@ const ADJUST_KEYWORDS = [
   { cond:"neck",           re:/(\bneck\b|cervical|whiplash)/i },
   { cond:"osteoporosis",   re:/(osteoporo\w*|osteopenia|bone\s*density|brittle\s*bones?)/i },
   { cond:"sciatica",       re:/(sciatic\w*|nerve\s*pain|pinched\s*nerve|shooting\s*(pain|down\s*(the\s*)?leg))/i },
-  { cond:"diabetes",       re:/(diabet\w*|blood\s*sugar|glucose|insulin|hypoglyc\w*)/i }
+  { cond:"diabetes",       re:/(diabet\w*|blood\s*sugar|glucose|insulin|hypoglyc\w*)/i },
+  { cond:"fibromyalgia",   re:/(fibro\w*|chronic\s*pain|chronic\s*fatigue|\bcfs\b|\bme\/cfs\b)/i },
+  { cond:"post_surgery",   re:/(post[-\s]*op\w*|post[-\s]*surg\w*|surgery|surgical|\breplacement\b|\brepair\b|\brehab\b)/i }
 ];
 /* Read the free-text box and return the conditions it implies. */
 function parseAdjustments(text){
@@ -3398,7 +3465,7 @@ function validPool(facility, conditions){
   const arthritis = conds.includes("arthritis");
   const osteo     = conds.includes("osteoporosis");
   const sciatica  = conds.includes("sciatica");
-  const noImpact  = conds.includes("foot_ankle") || conds.includes("vascular_bp") || conds.includes("pregnancy") || conds.includes("cardiovascular") || conds.includes("asthma") || conds.includes("plantar_fasciitis") || osteo;
+  const noImpact  = conds.includes("foot_ankle") || conds.includes("vascular_bp") || conds.includes("pregnancy") || conds.includes("cardiovascular") || conds.includes("asthma") || conds.includes("plantar_fasciitis") || conds.includes("fibromyalgia") || osteo;
   const noStep    = conds.includes("foot_ankle") || conds.includes("plantar_fasciitis");
   const preg      = conds.includes("pregnancy");
   return EXERCISES.filter(ex => {
@@ -4800,7 +4867,12 @@ function programToStaticHTML(data){
 
   return `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHTML(title)}</title>
   <style>
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
     body{font-family:-apple-system,Segoe UI,sans-serif;color:#1a1a1a;max-width:800px;margin:0 auto;padding:24px;font-size:14px;line-height:1.5}
+    .printbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:#fafaf9;border:1px solid #e5e5e0;border-radius:10px;padding:10px 14px;margin-bottom:18px}
+    .printbar button{background:${col};color:#fff;border:none;border-radius:7px;padding:9px 18px;font:inherit;font-weight:700;cursor:pointer}
+    .printbar button:hover{opacity:.9}
+    .printbar .hint{font-size:.76rem;color:#6b7280}
     .head{border-bottom:3px solid ${col};padding-bottom:10px;margin-bottom:18px}
     h1{font-size:1.4rem;margin:0}
     .brand{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:#6b7280;margin-top:4px}
@@ -4828,9 +4900,20 @@ function programToStaticHTML(data){
     .calc{border:1px solid #d6d6ce;border-radius:7px;padding:8px 4px;text-align:center;font-size:.74rem}
     .calc.tr{background:#f3eef8;border-color:#d8c8ea}
     .calc .cd{color:#6b7280;font-size:.66rem;text-transform:uppercase;margin-bottom:3px}
-    @media print{.tempo-note{color:#444}}
+    .day{page-break-inside:avoid}
+    .dayhead{page-break-after:avoid}
+    thead{display:table-header-group}
+    tr{page-break-inside:avoid}
+    @page{margin:14mm}
+    @media print{
+      body{padding:0;max-width:100%}
+      .printbar{display:none !important}
+      .tempo-note{color:#444}
+      .foot{page-break-inside:avoid}
+    }
   </style></head><body>
-  <div class="head"><h1>${escapeHTML(title)}</h1><div class="brand">Chris's Programming</div><div class="meta">${today} · ${goalLabels} · ${vals.length} min · ${facilityTag}</div></div>
+  <div class="printbar no-print"><button onclick="window.print()">🖨 Print / Save as PDF</button><span class="hint">Tip: on the print screen, choose <b>“Save as PDF”</b> as the destination to keep a copy.</span></div>
+  <div class="head"><h1>${escapeHTML(title)}</h1><div class="brand">Programming by Chris</div><div class="meta">${today} · ${goalLabels} · ${vals.length} min · ${facilityTag}</div></div>
   ${vals.programNote?`<div class="plannote"><b>${vals.isPlan?`${vals.weeks}-Week Plan.`:"Weekly Plan."}</b> ${escapeHTML(vals.programNote)}</div>`:""}${(vals.weeklySchedule?`<div class="calg">${vals.weeklySchedule.days.map((d,i)=>{const s=vals.weeklySchedule.slots[i]||"Rest";return `<div class="calc ${s==="Rest"?"":"tr"}"><div class="cd">${escapeHTML(d)}</div>${escapeHTML(s)}</div>`}).join("")}</div>`:"")}
   ${daysHTML}
   <p class="tempo-note"><b>Tempo</b> = how slow to move. "3s down" means take 3 seconds to lower the weight — slow and controlled builds the most muscle. Full range every rep.</p>
@@ -5646,6 +5729,59 @@ function closeWhatsNew(){
   const el=document.getElementById("whatsNew"); if(el) el.style.display="none";
 }
 
+/* =========================================================================
+   FEEDBACK — opens the client's email app with a note pre-addressed to Chris.
+   When they hit send it lands in his normal inbox. No backend needed.
+   ========================================================================= */
+const FEEDBACK_EMAIL = "chirsmarcelrosillo@gmail.com";
+function sendFeedback(){
+  const subject=encodeURIComponent("Programming by Chris — Feedback");
+  const body=encodeURIComponent(
+    "Hey Chris,\n\nHere's my feedback on the workout site:\n\n\n"+
+    "— Anything confusing?\n— Anything not working?\n— Anything you'd like added?\n\n"+
+    "Thanks!");
+  window.location.href=`mailto:${FEEDBACK_EMAIL}?subject=${subject}&body=${body}`;
+}
+
+/* =========================================================================
+   WELCOME — a one-time hello for a client's first visit, so they aren't
+   dropped onto the builder cold. Reopen any time isn't needed; What's New
+   covers ongoing changes.
+   ========================================================================= */
+function maybeShowWelcome(){
+  let seen=null; try{ seen=localStorage.getItem("pt_welcome"); }catch(e){}
+  if(seen) return false;
+  showWelcome(); return true;
+}
+function showWelcome(){
+  let el=document.getElementById("welcomeModal");
+  if(!el){ el=document.createElement("div"); el.id="welcomeModal"; el.className="wn-overlay"; document.body.appendChild(el); }
+  el.innerHTML=`<div class="wn-card">
+    <button class="wn-x" onclick="closeWelcome()" title="Close">✕</button>
+    <div class="wn-badge">👋 Welcome</div>
+    <h2 class="wn-title">Welcome to Programming by Chris</h2>
+    <p style="color:var(--muted);font-size:.92rem;line-height:1.55;margin-bottom:16px">Your own workout builder and tracker. Here's the quick tour:</p>
+    <div class="wn-list">
+      <div class="wn-item"><span class="wn-ico">✨</span><div><strong>New here? Start with Quick Start</strong><div class="wn-d">Answer a few questions and it builds today's workout for you.</div></div></div>
+      <div class="wn-item"><span class="wn-ico">▦</span><div><strong>Build or browse</strong><div class="wn-d">Make a full program, a single session, or pull a ready-made one from the libraries.</div></div></div>
+      <div class="wn-item"><span class="wn-ico">▶</span><div><strong>Train with Workout Mode</strong><div class="wn-d">A big, one-move-at-a-time view with a rest timer for while you're in the gym.</div></div></div>
+      <div class="wn-item"><span class="wn-ico">📈</span><div><strong>Track your progress</strong><div class="wn-d">Log your weights, PRs and sessions. It all saves on your device, just for you.</div></div></div>
+      <div class="wn-item"><span class="wn-ico">📖</span><div><strong>Not sure what a word means?</strong><div class="wn-d">The Gym Dictionary explains any term in plain English.</div></div></div>
+    </div>
+    <div class="btn-row" style="gap:8px">
+      <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="closeWelcome();showTab('quickstart')">✨ Start here</button>
+      <button class="btn btn-secondary" style="flex:1;justify-content:center" onclick="closeWelcome()">Look around</button>
+    </div>
+  </div>`;
+  el.style.display="flex";
+  el.onclick=e=>{ if(e.target===el) closeWelcome(); };
+}
+function closeWelcome(){
+  // A first-timer just saw everything, so don't also pop What's New at them later.
+  try{ localStorage.setItem("pt_welcome","1"); localStorage.setItem("pt_whatsnew", WHATS_NEW_VERSION); }catch(e){}
+  const el=document.getElementById("welcomeModal"); if(el) el.style.display="none";
+}
+
 /* Make the site installable to a phone/desktop home screen. The icon and web
    app manifest are drawn/built at runtime so the app remains one HTML file. */
 function setupPWA(){
@@ -5688,7 +5824,7 @@ toggleFrequency();
 loadQsAnswers();
 loadFromHash();
 setupPWA();
-maybeShowWhatsNew();
+if(!maybeShowWelcome()) maybeShowWhatsNew();   // first-timers see Welcome; returning users see What's New
 applyTheme((function(){ try{ return localStorage.getItem("pt_theme")||"dark"; }catch(e){ return "dark"; } })());
 </script>
 </body>

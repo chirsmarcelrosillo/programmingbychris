@@ -844,10 +844,17 @@
     touch-action: manipulation;
   }
   /* Momentum scrolling + don't drag the page when a scroller hits its end */
+  /* Momentum scrolling everywhere. Containment ONLY on genuinely vertical
+     scrollers (modal lists, the workout overlay). It must NOT go on the
+     program table wrapper: `overflow-x:auto` makes the browser compute
+     `overflow-y:auto` as well, so containing the Y axis there stopped the
+     PAGE from scrolling whenever a finger passed over the exercise rows. */
   .exp-list, .exd-body, .table-scroll, .tc-scroll, #workoutMode, .fullpage{
     -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
   }
+  .exp-list, .exd-body, #workoutMode{ overscroll-behavior: contain; }
+  /* horizontal scrollers: contain sideways, but let vertical scroll pass through */
+  .table-scroll, .tc-scroll{ overscroll-behavior-x: contain; overscroll-behavior-y: auto; }
   /* Body lock while any modal is open (added by JS) */
   body.modal-open{ overflow:hidden; position:relative; }
   /* Notched phones: keep content out of the rounded corners and home bar */
@@ -977,6 +984,29 @@
   /* full-size modals again */
   body.desktop-mode .exp-modal{ max-width:620px; }
   body.desktop-mode .app-body{ grid-template-columns:360px minmax(0,1fr); }
+  @media (max-width:768px){
+    /* A drag that STARTS on one of these little number boxes used to move the
+       text caret instead of scrolling the page, which felt like the app had
+       frozen. pan-y hands vertical drags back to the page; tapping still
+       focuses the field normally. */
+    table.program-table .editable-input,
+    .td-card-in input, .td-card-note,
+    #panel-clients input.tc-cell{
+      touch-action: pan-y;
+    }
+  }
+  /* Quick-suggestions button — sits next to the search button so clients who
+     don't know what to search still get 2-4 sensible alternatives. */
+  .sugg-ico{ background:none; border:none; color:var(--muted); cursor:pointer; font-size:.95rem;
+    padding:0 2px; line-height:1; flex-shrink:0; }
+  .sugg-ico:hover, .sugg-ico:focus-visible{ color:var(--accent); }
+  @media print{ .sugg-ico{ display:none !important; } }
+  @media (max-width:768px){
+    .sugg-ico{ border:1px solid var(--border); border-radius:9px; padding:7px 10px; min-height:44px; }
+    .sugg-ico::after{ content:" Ideas"; font-size:.72rem; font-weight:700; }
+    /* keep the quick menu on screen on a narrow phone */
+    .row-swap-menu{ width:max-content; min-width:220px; max-width:calc(100vw - 24px); }
+  }
 </style>
 </head>
 <body>
@@ -5829,7 +5859,7 @@ function buildRow(row,dayIdx,rowIdx,exerciseOptions,ss){
   return `<tr id="row-${uid}" data-day="${dayIdx}" data-row="${rowIdx}">
     <td data-label="Group"><input class="editable-input group-input" type="text" value="${escapeHTML(row.group||"")}" title="Superset group (A1, A2, B…)"></td>
     <td class="num-cell" style="color:var(--muted);font-size:.82rem">${rowIdx+1}</td>
-    <td data-label="Exercise"><div class="ex-cell"><select class="editable-select" onchange="updateRowCue('${uid}',this.value)">${extraOpt}${opts}</select><button type="button" class="ex-namebtn" id="namebtn-${uid}" onclick="openRowSearch(this)" aria-label="Change exercise: ${escapeHTML(row.name)}">${escapeHTML(row.name)}<span class="ex-namebtn-ic">⌄</span></button><button class="swap-ico" onclick="openRowSearch(this)" title="Search all exercises to swap this one" aria-label="Swap this exercise">⇄</button><button class="ex-info-btn" onclick="openExDetail(this.closest('tr').querySelector('select.editable-select').value)" title="Details &amp; form video" aria-label="Exercise details and demo">ⓘ</button></div><div class="last-time" id="last-${uid}">${escapeHTML(lastTimeFor(row.name))}</div></td>
+    <td data-label="Exercise"><div class="ex-cell"><select class="editable-select" onchange="updateRowCue('${uid}',this.value)">${extraOpt}${opts}</select><button type="button" class="ex-namebtn" id="namebtn-${uid}" onclick="openRowSearch(this)" aria-label="Change exercise: ${escapeHTML(row.name)}">${escapeHTML(row.name)}<span class="ex-namebtn-ic">⌄</span></button><button class="sugg-ico" onclick="rowSwapMenu(this)" title="Quick suggestions — a few similar moves" aria-label="Quick swap suggestions">💡</button><button class="swap-ico" onclick="openRowSearch(this)" title="Search all exercises to swap this one" aria-label="Swap this exercise">⇄</button><button class="ex-info-btn" onclick="openExDetail(this.closest('tr').querySelector('select.editable-select').value)" title="Details &amp; form video" aria-label="Exercise details and demo">ⓘ</button></div><div class="last-time" id="last-${uid}">${escapeHTML(lastTimeFor(row.name))}</div></td>
     <td data-label="Sets"><input class="editable-input" type="text" value="${escapeHTML(String(row.sets))}" style="width:36px" title="Sets"></td>
     <td data-label="Reps"><input class="editable-input" type="text" value="${escapeHTML(String(row.reps))}" title="Reps or time (e.g. 30s)">${isCoreMove(row.name)?`<button type="button" class="reps-mode-btn" onclick="toggleRepsMode(this)" title="Switch this core move between reps and timed" style="margin-left:5px;font-size:.6rem;font-weight:700;padding:2px 6px;border:1px solid var(--border);border-radius:6px;background:transparent;color:var(--muted);cursor:pointer;vertical-align:middle">${repsIsTimed(String(row.reps))?"⏱ timed":"# reps"}</button>`:""}</td>
     <td data-label="Weight"><input class="editable-input wt-input" type="text" value="${escapeHTML(row.weight||"")}" style="width:54px" placeholder="lbs" title="Working weight (remembered per client)"></td>
@@ -6562,7 +6592,7 @@ function rowSwapMenu(btn){
   const t=document.createElement("div"); t.className="rsm-title"; t.textContent="Swap for something similar:"; menu.appendChild(t);
   if(!alts.length){ const none=document.createElement("div"); none.className="rsm-empty"; none.textContent="No close match for this gym."; menu.appendChild(none); }
   alts.forEach(e=>{ const b=document.createElement("button"); b.textContent=e.name; b.onclick=()=>{ sel.value=e.name; sel.dispatchEvent(new Event("change")); closeRowMenu(); showToast("Swapped"); }; menu.appendChild(b); });
-  const more=document.createElement("button"); more.className="rsm-more"; more.textContent="See the full swap list →"; more.onclick=()=>{ closeRowMenu(); openSwapList(); }; menu.appendChild(more);
+  const more=document.createElement("button"); more.className="rsm-more"; more.textContent="🔍 Search all exercises →"; more.onclick=()=>{ closeRowMenu(); openRowSearch(btn); }; menu.appendChild(more);
   document.body.appendChild(menu);
   const r=btn.getBoundingClientRect();
   menu.style.left=Math.min(r.left, window.innerWidth-250)+"px";

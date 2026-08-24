@@ -1007,6 +1007,29 @@
     /* keep the quick menu on screen on a narrow phone */
     .row-swap-menu{ width:max-content; min-width:220px; max-width:calc(100vw - 24px); }
   }
+  /* Block finished */
+  .block-done{ background:oklch(0.72 0.10 150 / .12); border:1px solid oklch(0.72 0.10 150 / .35);
+    border-radius:14px; padding:15px 17px; margin:0 0 16px; font-size:.93rem; line-height:1.6; }
+  .block-done strong{ font-size:1.02rem; }
+  /* Adherence */
+  .adh{ margin-top:12px; padding:12px 14px; border-radius:12px; background:var(--surface-2); border:1px solid var(--border); }
+  .adh.good{ background:oklch(0.72 0.10 150 / .12); border-color:oklch(0.72 0.10 150 / .32); }
+  .adh.warn{ background:oklch(0.78 0.09 70 / .12); border-color:oklch(0.78 0.09 70 / .32); }
+  .adh-top{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; font-size:.9rem; margin-bottom:8px; }
+  .adh-top span{ font-size:.76rem; color:var(--muted); }
+  .adh-bar{ height:8px; border-radius:999px; background:oklch(0.62 0.15 325 / .15); overflow:hidden; }
+  .adh-fill{ height:100%; background:linear-gradient(90deg, oklch(0.62 0.15 325), oklch(0.72 0.13 350)); border-radius:999px; }
+  .adh-note{ font-size:.82rem; color:var(--muted); margin-top:7px; line-height:1.5; }
+  /* Pain -> action */
+  .pain-act{ display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px;
+    margin-top:11px; padding-top:11px; border-top:1px solid var(--border); font-size:.86rem; }
+  /* Keep your progress safe */
+  .safe-box{ margin-top:12px; padding:13px 15px; border-radius:12px;
+    background:oklch(0.78 0.09 70 / .10); border:1px solid oklch(0.78 0.09 70 / .30); }
+  .safe-title{ font-weight:700; font-size:.9rem; margin-bottom:9px; }
+  .safe-row{ display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:9px;
+    font-size:.85rem; line-height:1.5; padding:6px 0; }
+  .safe-row + .safe-row{ border-top:1px solid var(--border); }
 </style>
 </head>
 <body>
@@ -6690,6 +6713,13 @@ function showPainSuggest(area){
   if(!box) return;
   const tips=painSuggestionsFor(area);
   box.innerHTML=`<strong>💡 Suggestions for "${escapeHTML(area)}"</strong><ul>${tips.map(t=>`<li>${escapeHTML(t)}</li>`).join("")}</ul>`;
+  // If their current plan actually loads that area, offer to fix it in one tap
+  const nAff = painAffectedCount(area);
+  if(nAff){
+    box.innerHTML += '<div class="pain-act"><span><strong>' + nAff + '</strong> move' + (nAff===1?'':'s')
+      + ' in your current plan load that area.</span>'
+      + '<button class="btn btn-primary btn-sm" onclick="adjustForPain(\'' + jsAttr(area) + '\')">🩹 Swap them out</button></div>';
+  }
   box.style.display="block";
 }
 
@@ -7271,7 +7301,7 @@ function progressCode(){
 function copyProgressCode(){
   const code=progressCode();
   if(!code){ alert("Couldn't build the code."); return; }
-  const done=()=>showToast("📋 Code copied — paste it to Chris");
+  const done=()=>{ markProgressSent(); showToast("📋 Code copied — paste it to Chris"); };
   if(navigator.clipboard && navigator.clipboard.writeText){
     navigator.clipboard.writeText(code).then(done, ()=>fallbackCopy(code, done));
   } else fallbackCopy(code, done);
@@ -7321,7 +7351,7 @@ function backupEverything(){
     const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
     a.download="chris-programming-backup-"+todayStr()+".json";
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    markBackup();                                   // a full backup also satisfies the template nudge
+    markBackup(); markDataBackup();                 // a full backup satisfies both nudges
     renderTemplateList();
     showToast("⬇ Full backup downloaded");
   }catch(e){ alert("Couldn't download the backup in this view — open the file directly in a browser."); }
@@ -7947,12 +7977,213 @@ function renderPhotos(){
   host.innerHTML=compare+`<div class="ph-grid">${grid}</div>
     <div class="ph-note">${ps.length} of ${PHOTO_MAX} saved. Stored only in this browser, never uploaded. Use “Back up everything” to keep them.</div>`;
 }
+/* =========================================================================
+   FINISHING A BLOCK, ADHERENCE, PAIN THAT ACTS, AND KEEPING DATA SAFE
+   ========================================================================= */
+
+/* ---- 1. WHAT HAPPENS WHEN THE PROGRAM ENDS --------------------------------
+   A plan used to just sit there once the last week was done. This builds the
+   NEXT block off the same structure, starting from the weights actually
+   lifted, and rotates one accessory per day so it doesn't feel identical. */
+function planWeekNow(){
+  const saved=tdSaved(); if(!saved||!saved.vals||!saved.vals.isPlan) return null;
+  const start=planStartDate(); if(!start) return null;
+  return Math.floor(daysBetween(start, todayStr())/7)+1;
+}
+function planIsFinished(){
+  const saved=tdSaved(); if(!saved||!saved.vals||!saved.vals.isPlan) return false;
+  const wk=planWeekNow(); if(wk===null) return false;
+  return wk > (saved.vals.weeks||4);
+}
+/* A fresh alternative for one row: same muscles, allowed at their gym, not
+   already used that day. Falls back to leaving it alone. */
+function rotateChoice(row, vals, usedNames){
+  const cur=EXERCISES.find(e=>e.name===row.name); if(!cur) return row.name;
+  const pool=validPool(vals.facility||"VASA", vals.conditions||[]);
+  const cands=pool.filter(e=>e.name!==row.name && usedNames.indexOf(e.name)<0
+    && e.muscles.some(m=>cur.muscles.includes(m))
+    && (COMPOUND.has(e.name)===COMPOUND.has(row.name)));   // like for like
+  if(!cands.length) return row.name;
+  return cands[Math.floor(Math.random()*cands.length)].name;
+}
+function buildNextBlock(){
+  const saved=tdSaved();
+  if(!saved || !saved.days || !saved.days.length){ alert("No saved workout to build from yet."); return; }
+  const vals=JSON.parse(JSON.stringify(saved.vals||{}));
+  // week 1 is the clean template (later weeks have the rep progression baked in)
+  const base = vals.isPlan
+    ? saved.days.filter(d=>d.week===1 && !d.warmup)
+    : saved.days.filter(d=>!d.warmup);
+  if(!base.length){ alert("Couldn't read the structure of this plan."); return; }
+  const weeks=Math.min(6, Math.max(4, vals.weeks||4));
+  const deloadWeek=weeks;
+  let rotated=0;
+  const template=base.map(d=>{
+    const used=(d.rows||[]).map(r=>r.name);
+    // Rotate the last ACCESSORY of the day, not literally the last row —
+    // generated days usually end on a compound, which we never swap out.
+    let rotIdx=-1;
+    for(let k=(d.rows||[]).length-1; k>=0; k--){ if(!COMPOUND.has(d.rows[k].name)){ rotIdx=k; break; } }
+    const rows=(d.rows||[]).map((r,i)=>{
+      let name=r.name;
+      if(i===rotIdx){
+        const alt=rotateChoice(r, vals, used);
+        if(alt!==r.name){ name=alt; used.push(alt); rotated++; }
+      }
+      const remembered=myWeights[name] ? myWeights[name].weight : (myWeights[r.name]?myWeights[r.name].weight:"");
+      return { ...r, name, cue:cueFor(name)||r.cue||"",
+               weight: remembered || "", repsDone:"", notes:"" };
+    });
+    return { ...d, rows };
+  });
+  const days=[];
+  for(let w=1; w<=weeks; w++){
+    const isDeload=(w===deloadWeek);
+    template.forEach(bw=>{
+      const label=String(bw.label||"").replace(/^Week\s*\d+\s*·\s*/i,"").replace(/^DELOAD\s*·\s*/i,"").trim();
+      days.push({ ...bw, week:w, deload:isDeload,
+        label:`Week ${w}${isDeload?" · DELOAD":""} · ${label}`,
+        rows: isDeload ? deloadRows(bw.rows) : bw.rows.map(r=>({...r, reps:progressReps(r.reps, w-1)})) });
+    });
+  }
+  vals.weeks=weeks; vals.isPlan=true; vals.deloadWeek=deloadWeek;
+  vals.programNote="New block, built from the weights you finished on. Beat last week every session. Week "+deloadWeek+" is a planned deload.";
+  const next={ vals, days, hiitData:saved.hiitData||null };
+  tdWrite(next);
+  setPlanStart(todayStr());
+  try{ currentProgram={vals:next.vals, days:next.days, hiitData:next.hiitData}; }catch(e){}
+  tdDayIdx=null;
+  renderToday();
+  showToast(rotated ? `🎯 New ${weeks}-week block — ${rotated} move${rotated===1?"":"s"} rotated` : `🎯 New ${weeks}-week block ready`);
+}
+
+/* ---- 3. ADHERENCE --------------------------------------------------------
+   Sessions actually logged against how many the plan called for. */
+function adherence(){
+  const saved=tdSaved(); if(!saved||!saved.vals) return null;
+  const vals=saved.vals;
+  const start=planStartDate(); if(!start) return null;
+  const slots=(vals.weeklySchedule&&vals.weeklySchedule.slots)||[];
+  const perWeek=slots.filter(s=>s && s!=="Rest").length;
+  if(!perWeek) return null;
+  const totalWeeks=vals.isPlan ? (vals.weeks||1) : 1;
+  const elapsed=Math.min(totalWeeks, Math.max(1, Math.floor(daysBetween(start,todayStr())/7)+1));
+  const planned=perWeek*elapsed;
+  const done=(trSessions||[]).filter(s=>(s.date||"")>=start).length;
+  return { done, planned, perWeek, elapsed, totalWeeks,
+           pct: planned ? Math.min(100, Math.round(done/planned*100)) : 0 };
+}
+function adherenceHTML(){
+  const a=adherence(); if(!a || !a.planned) return "";
+  let tone="", line="";
+  if(a.pct>=90)      { tone="good"; line="Right on plan. This is exactly how progress happens."; }
+  else if(a.pct>=65) { tone="";     line="Solid. A session or two off plan is normal life."; }
+  else               { tone="warn"; line="Behind the plan. Pick the easiest day and just turn up, that counts."; }
+  return `<div class="adh ${tone}">
+      <div class="adh-top"><strong>${a.done} of ${a.planned} sessions</strong>
+        <span>week ${a.elapsed} of ${a.totalWeeks}</span></div>
+      <div class="adh-bar"><div class="adh-fill" style="width:${a.pct}%"></div></div>
+      <div class="adh-note">${escapeHTML(line)}</div>
+    </div>`;
+}
+
+/* ---- 4. PAIN THAT ACTUALLY CHANGES THE PROGRAM ---------------------------
+   Logging a sore knee used to only print advice. This swaps the movements
+   that load that area out of the saved plan, using the same condition
+   filters the generator already uses. */
+const PAIN_CONDITION = {
+  knee:"knee", knees:"knee", back:"lower_back", "lower back":"lower_back", spine:"lower_back",
+  shoulder:"shoulder", shoulders:"shoulder", hip:"hip", hips:"hip",
+  wrist:"wrist_elbow", wrists:"wrist_elbow", elbow:"wrist_elbow", elbows:"wrist_elbow",
+  ankle:"foot_ankle", ankles:"foot_ankle", foot:"foot_ankle", feet:"foot_ankle",
+  neck:"neck", sciatica:"sciatica"
+};
+function painConditionFor(area){
+  const a=String(area||"").toLowerCase().trim();
+  if(PAIN_CONDITION[a]) return PAIN_CONDITION[a];
+  for(const k of Object.keys(PAIN_CONDITION)){ if(a.indexOf(k)>=0) return PAIN_CONDITION[k]; }
+  return "";
+}
+/* How many rows in the saved plan load that area right now. */
+function painAffectedCount(area){
+  const cond=painConditionFor(area); if(!cond) return 0;
+  const saved=tdSaved(); if(!saved) return 0;
+  let n=0;
+  (saved.days||[]).forEach(d=>(d.rows||[]).forEach(r=>{
+    const ex=EXERCISES.find(e=>e.name===r.name);
+    if(ex && (ex.conditions||[]).includes(cond)) n++;
+  }));
+  return n;
+}
+function adjustForPain(area){
+  const cond=painConditionFor(area);
+  if(!cond){ alert("Tell me which joint it is (knee, back, shoulder, hip, wrist, ankle, neck) and I can adjust the plan."); return; }
+  const saved=tdSaved(); if(!saved){ alert("No saved workout to adjust."); return; }
+  const vals=saved.vals||{};
+  const conds=(vals.conditions||[]).slice();
+  if(conds.indexOf(cond)<0) conds.push(cond);
+  const safe=validPool(vals.facility||"VASA", conds);
+  let swapped=0;
+  (saved.days||[]).forEach(d=>{
+    const used=(d.rows||[]).map(r=>r.name);
+    (d.rows||[]).forEach(r=>{
+      const ex=EXERCISES.find(e=>e.name===r.name);
+      if(!ex || !(ex.conditions||[]).includes(cond)) return;
+      const alt=safe.filter(e=>e.name!==r.name && used.indexOf(e.name)<0
+        && e.muscles.some(m=>ex.muscles.includes(m)))
+        .sort((a,b)=>{
+          const sa=a.muscles.filter(m=>ex.muscles.includes(m)).length;
+          const sb=b.muscles.filter(m=>ex.muscles.includes(m)).length;
+          return (sb-sa) || (rankExercise(b,vals.facility)-rankExercise(a,vals.facility));
+        })[0];
+      if(alt){ r.name=alt.name; r.cue=cueFor(alt.name)||""; used.push(alt.name); swapped++; }
+    });
+  });
+  if(!swapped){ showToast("Nothing in your plan loads that area — no changes needed"); return; }
+  saved.vals=saved.vals||{}; saved.vals.conditions=conds;
+  tdWrite(saved);
+  try{ currentProgram={vals:saved.vals, days:saved.days, hiitData:saved.hiitData}; }catch(e){}
+  renderToday();
+  showToast(`🩹 Swapped ${swapped} move${swapped===1?"":"s"} away from your ${escapeHTML(area)}`);
+}
+
+/* ---- KEEPING DATA SAFE (no server) ---------------------------------------
+   Everything lives in this browser. Clear it, switch phones, or use private
+   mode and it is gone. Two nudges: back the file up, and send your progress
+   to Chris so a copy also lives with him. */
+function lastBackupAt(){
+  try{ const b=JSON.parse(localStorage.getItem("pt_backup_at")||"null"); return b&&b.t?b.t:0; }catch(e){ return 0; }
+}
+function markDataBackup(){ try{ localStorage.setItem("pt_backup_at", JSON.stringify({t:Date.now()})); }catch(e){} }
+function lastSentAt(){
+  try{ const b=JSON.parse(localStorage.getItem("pt_sent_at")||"null"); return b&&b.t?b.t:0; }catch(e){ return 0; }
+}
+function markProgressSent(){ try{ localStorage.setItem("pt_sent_at", JSON.stringify({t:Date.now()})); }catch(e){} }
+function hasWorthSaving(){
+  return (trWeight.length + trMeasure.length + trPR.length + trSessions.length + trExLog.length + readPhotos().length) >= 6;
+}
+function daysAgo(ts){ return ts ? Math.floor((Date.now()-ts)/86400000) : null; }
+function safetyNudgeHTML(){
+  if(!hasWorthSaving()) return "";
+  const b=daysAgo(lastBackupAt()), s=daysAgo(lastSentAt());
+  const bits=[];
+  if(b===null || b>=30){
+    bits.push(`<div class="safe-row"><span>${b===null?"You've never backed up your progress.":"Last backup was "+b+" days ago."} It only lives in this browser.</span>
+      <button class="btn btn-secondary btn-sm" onclick="backupEverything(); markDataBackup(); renderToday();">⬇ Back up now</button></div>`);
+  }
+  if(s===null || s>=30){
+    bits.push(`<div class="safe-row"><span>${s===null?"Chris hasn't got a copy of your progress yet.":"Chris last got your progress "+s+" days ago."}</span>
+      <button class="btn btn-secondary btn-sm" onclick="copyProgressCode(); markProgressSent(); renderToday();">📤 Send to Chris</button></div>`);
+  }
+  if(!bits.length) return "";
+  return `<div class="safe-box"><div class="safe-title">🔒 Keep your progress safe</div>${bits.join("")}</div>`;
+}
 function renderToday(){
   const host=document.getElementById("todayBody"); if(!host) return;
   const t=computeToday();
   const pretty=new Date().toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"});
   const done=sessionsThisWeek();
-  const streak=`<div class="td-streak">${done>0?`✓ ${done} session${done===1?"":"s"} logged in the last 7 days`:"No sessions logged yet this week — today&#39;s a good day to start."}</div>`+checkInNudge()+reminderToggleHTML();
+  const streak=`<div class="td-streak">${done>0?`✓ ${done} session${done===1?"":"s"} logged in the last 7 days`:"No sessions logged yet this week — today&#39;s a good day to start."}</div>`+checkInNudge()+adherenceHTML()+safetyNudgeHTML()+reminderToggleHTML();
 
   if(t.state==="empty"){
     host.innerHTML=`<div class="td-wrap">
@@ -7968,6 +8199,7 @@ function renderToday(){
     return;
   }
 
+  const blockDone = planIsFinished() ? `<div class="block-done"><strong>🎉 That block is done.</strong> Nice work. Your next four weeks can start from the weights you finished on, with a move or two rotated so it stays interesting.<div class="btn-row" style="margin-top:10px"><button class="btn btn-primary" onclick="buildNextBlock()">Build my next block</button><button class="btn btn-secondary btn-sm" onclick="restartPlan()">Repeat this one</button></div></div>` : "";
   const weekLine = t.vals.isPlan ? `<span class="td-chip">Week ${t.week} of ${t.weeks}</span>` : "";
   const isDeload = t.vals.isPlan && t.vals.deloadWeek && t.week===t.vals.deloadWeek;
   const deloadChip = isDeload ? `<span class="td-chip deload">🌙 Deload week</span>` : "";
@@ -7976,7 +8208,7 @@ function renderToday(){
   if(t.state==="rest"){
     host.innerHTML=`<div class="td-wrap">
       <div class="td-date">${escapeHTML(pretty)}</div>
-      <div class="td-chips">${weekLine}${deloadChip}</div>
+      <div class="td-chips">${weekLine}${deloadChip}</div>${blockDone}
       <h2 class="td-h">Rest day 🌙</h2>
       <p class="td-sub">Nothing scheduled for ${escapeHTML(t.dayName)}. Rest is when the work you already did actually turns into muscle. Walk, stretch, eat well, sleep.</p>
       <div class="btn-row">
@@ -7994,7 +8226,7 @@ function renderToday(){
       const d=t.saved.days[tdDayIdx];
       host.innerHTML=`<div class="td-wrap">
         <div class="td-date">${escapeHTML(pretty)}</div>
-        <div class="td-chips">${weekLine}${deloadChip}</div>
+        <div class="td-chips">${weekLine}${deloadChip}</div>${blockDone}
         <h2 class="td-h">${escapeHTML(d.label||"Today's workout")}</h2>
         <p class="td-sub">${(d.rows||[]).length} exercises · about ${estimateRowsMinutes(d.rows||[])} minutes</p>
         <div class="btn-row">
@@ -8012,7 +8244,7 @@ function renderToday(){
       <span class="td-day-meta">${(d.rows||[]).length} exercises · ~${estimateRowsMinutes(d.rows||[])} min</span></button>`).join("");
     host.innerHTML=`<div class="td-wrap">
       <div class="td-date">${escapeHTML(pretty)}</div>
-      <div class="td-chips">${weekLine}${deloadChip}</div>
+      <div class="td-chips">${weekLine}${deloadChip}</div>${blockDone}
       <h2 class="td-h">What are you training today?</h2>
       <p class="td-sub">Pick a day to see it and log your weights.</p>
       <div class="td-days">${opts}</div>
@@ -8027,7 +8259,7 @@ function renderToday(){
   const more=rows.length>6?`<li class="td-more">+ ${rows.length-6} more</li>`:"";
   host.innerHTML=`<div class="td-wrap">
     <div class="td-date">${escapeHTML(pretty)}</div>
-    <div class="td-chips">${weekLine}${deloadChip}</div>
+    <div class="td-chips">${weekLine}${deloadChip}</div>${blockDone}
     <h2 class="td-h">${escapeHTML(t.day.label||"Today's workout")}</h2>
     <p class="td-sub">${rows.length} exercises · about ${estimateRowsMinutes(rows)} minutes${isDeload?" · take it light today":""}</p>
     <div class="btn-row">

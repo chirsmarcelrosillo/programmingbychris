@@ -1030,6 +1030,43 @@
   .safe-row{ display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:9px;
     font-size:.85rem; line-height:1.5; padding:6px 0; }
   .safe-row + .safe-row{ border-top:1px solid var(--border); }
+  /* A segmented control works for 2 or 3 short options. The equipment picker
+     has 4 longer ones, which overflowed off the side of the card on a phone.
+     Give any group of 4+ its own wrapping grid of proper cards instead. */
+  .toggle-group.tg-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:8px; border:none; border-radius:0; overflow:visible; background:transparent; }
+  .toggle-group.tg-grid label{ flex:none; border:1px solid var(--border); border-radius:11px;
+    padding:12px 13px; text-align:left; line-height:1.35; background:var(--surface); }
+  .toggle-group.tg-grid label:not(:last-child){ border-right:1px solid var(--border); }
+  .toggle-group.tg-grid label:hover{ border-color:var(--accent); }
+  .toggle-group.tg-grid input[type="radio"]:checked + label{
+    background:oklch(0.62 0.15 325 / .18); border-color:var(--accent); color:var(--text); }
+  .tg-grid .tg-name{ display:block; font-weight:700; font-size:.9rem; }
+  .tg-grid .tg-sub{ display:block; font-size:.74rem; color:var(--muted); font-weight:500; margin-top:3px; }
+  .toggle-group.tg-grid input[type="radio"]:checked + label .tg-sub{ color:var(--text); opacity:.8; }
+  /* Editable finisher */
+  .hf-cfg{ display:flex; flex-wrap:wrap; gap:10px; margin:4px 0 12px; }
+  .hf-cfg label{ display:flex; flex-direction:column; gap:4px; }
+  .hf-cfg span{ font-size:.66rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:700; }
+  .hf-cfg input{ width:84px; box-sizing:border-box; background:var(--bg); color:var(--text);
+    border:1px solid var(--border); border-radius:9px; padding:9px 10px; font:inherit; }
+  .hf-cfg input:focus{ border-color:var(--accent); outline:none; }
+  table.hf-table{ width:100%; border-collapse:collapse; }
+  table.hf-table td{ padding:7px 8px; border-bottom:1px solid var(--border); vertical-align:middle; }
+  .hf-num{ width:26px; color:var(--muted); font-size:.82rem; }
+  .hf-ex{ min-width:150px; }
+  .hf-ex select{ width:100%; font-weight:600; }
+  .hf-cue{ color:var(--muted); font-size:.82rem; }
+  .hf-del{ width:34px; text-align:right; }
+  @media(max-width:560px){
+    table.hf-table, table.hf-table tbody, table.hf-table tr, table.hf-table td{ display:block; width:100%; }
+    table.hf-table tr{ border:1px solid var(--border); border-radius:10px; padding:8px 10px; margin-bottom:9px; }
+    table.hf-table td{ border:none; padding:3px 0; }
+    .hf-num{ display:none !important; }
+    .hf-del{ text-align:left; }
+    .hf-cfg input{ width:100%; }
+    .hf-cfg label{ flex:1 1 30%; }
+  }
 </style>
 </head>
 <body>
@@ -1082,11 +1119,13 @@
       <div class="field"><label>Client Name</label><input type="text" id="clientName" placeholder="First name"></div>
 
       <div class="field"><label>Facility</label>
-        <div class="toggle-group">
-          <input type="radio" name="facility" id="fac-cih" value="CIH" checked><label for="fac-cih">CIH (Free weights)</label>
-          <input type="radio" name="facility" id="fac-vasa" value="VASA"><label for="fac-vasa">VASA (Full gym)</label>
+        <div class="toggle-group tg-grid">
+          <input type="radio" name="facility" id="fac-dumbbell" value="dumbbell"><label for="fac-dumbbell"><span class="tg-name">Dumbbells only</span><span class="tg-sub">A pair of dumbbells and a bench</span></label>
+          <input type="radio" name="facility" id="fac-home" value="home" checked><label for="fac-home"><span class="tg-name">Home setup</span><span class="tg-sub">Dumbbells, kettlebells, bands, bench</span></label>
+          <input type="radio" name="facility" id="fac-bands" value="bands"><label for="fac-bands"><span class="tg-name">Bands &amp; bodyweight</span><span class="tg-sub">Travel friendly, no weights needed</span></label>
+          <input type="radio" name="facility" id="fac-gym" value="gym"><label for="fac-gym"><span class="tg-name">Full commercial gym</span><span class="tg-sub">Barbells, machines and cables too</span></label>
         </div>
-        <div style="font-size:.74rem;color:var(--muted);margin-top:5px">CIH = free weights &amp; bodyweight only (goblet-squat focused). VASA = barbells, machines &amp; cables too.</div>
+        <div style="font-size:.74rem;color:var(--muted);margin-top:8px">Pick whatever they actually have. Every exercise the app suggests is filtered to that gear.</div>
       </div>
 
       <div class="field"><label>Mode</label>
@@ -1238,6 +1277,7 @@
       <div class="btn-row"><button class="btn btn-primary" onclick="generateProgram()">Generate Program</button><button class="btn btn-secondary" onclick="browseExercises('program')" title="Search the exercise library by body part and equipment">🔍 Browse exercises</button></div>
     </div>
 
+
     <!-- ============ TAB: SINGLE SESSION ============ -->
     <div class="card" id="panel-session" style="display:none">
       <h2>Single Session — Workout for the Day</h2>
@@ -1246,11 +1286,13 @@
       <div class="field"><label>Client Name</label><input type="text" id="sessClientName" placeholder="First name"></div>
 
       <div class="field"><label>Facility</label>
-        <div class="toggle-group">
-          <input type="radio" name="sessFacility" id="sfac-cih" value="CIH" checked><label for="sfac-cih">CIH (Free weights)</label>
-          <input type="radio" name="sessFacility" id="sfac-vasa" value="VASA"><label for="sfac-vasa">VASA (Full gym)</label>
+        <div class="toggle-group tg-grid">
+          <input type="radio" name="sessFacility" id="sfac-dumbbell" value="dumbbell"><label for="sfac-dumbbell"><span class="tg-name">Dumbbells only</span><span class="tg-sub">A pair of dumbbells and a bench</span></label>
+          <input type="radio" name="sessFacility" id="sfac-home" value="home" checked><label for="sfac-home"><span class="tg-name">Home setup</span><span class="tg-sub">Dumbbells, kettlebells, bands, bench</span></label>
+          <input type="radio" name="sessFacility" id="sfac-bands" value="bands"><label for="sfac-bands"><span class="tg-name">Bands &amp; bodyweight</span><span class="tg-sub">Travel friendly, no weights needed</span></label>
+          <input type="radio" name="sessFacility" id="sfac-gym" value="gym"><label for="sfac-gym"><span class="tg-name">Full commercial gym</span><span class="tg-sub">Barbells, machines and cables too</span></label>
         </div>
-        <div style="font-size:.74rem;color:var(--muted);margin-top:5px">CIH = free weights only (goblet-squat focused). VASA = barbells, machines &amp; cables. Use Intensity for very easy → killer.</div>
+        <div style="font-size:.74rem;color:var(--muted);margin-top:8px">Pick whatever you actually have. Use Intensity for very easy through to killer.</div>
       </div>
 
       <div class="field"><label>Mode</label>
@@ -1406,8 +1448,8 @@
       </div>
       <div class="lib-filters">
         <button class="lib-chip active" data-f="equip" data-v="all"   onclick="setLibFilter(this,'equip','all')">Any equipment</button>
-        <button class="lib-chip"        data-f="equip" data-v="CIH"   onclick="setLibFilter(this,'equip','CIH')">Free weights / bands</button>
-        <button class="lib-chip"        data-f="equip" data-v="VASA"  onclick="setLibFilter(this,'equip','VASA')">Full gym</button>
+        <button class="lib-chip"        data-f="equip" data-v="home"  onclick="setLibFilter(this,'equip','home')">Home / free weights</button>
+        <button class="lib-chip"        data-f="equip" data-v="gym"   onclick="setLibFilter(this,'equip','gym')">Full gym</button>
       </div>
       <div id="libCount" class="lib-count"></div>
       <div id="libraryList"></div>
@@ -1421,7 +1463,9 @@
       <div class="field"><label>Facility</label>
         <div class="toggle-group">
           <input type="radio" name="progLibFacility" id="plfac-keep" value="keep" checked><label for="plfac-keep">Use program default</label>
-          <input type="radio" name="progLibFacility" id="plfac-cih" value="CIH"><label for="plfac-cih">Force CIH</label>
+          <input type="radio" name="progLibFacility" id="plfac-dumbbell" value="dumbbell"><label for="plfac-dumbbell">Dumbbells only</label>
+          <input type="radio" name="progLibFacility" id="plfac-home" value="home"><label for="plfac-home">Home setup</label>
+          <input type="radio" name="progLibFacility" id="plfac-bands" value="bands"><label for="plfac-bands">Bands &amp; bodyweight</label>
         </div>
         <div style="font-size:.74rem;color:var(--muted);margin-top:5px">Force CIH auto-swaps every machine &amp; barbell lift to the closest free-weight match.</div>
       </div>
@@ -1436,8 +1480,8 @@
       <input type="text" id="progSearch" placeholder="Search programs… (e.g. PPL, beginner, 4 week)" oninput="renderProgramLibList()" style="margin-bottom:8px">
       <div class="lib-filters">
         <button class="lib-chip active" data-f="pequip" data-v="all"  onclick="setLibFilter(this,'pequip','all')">Any equipment</button>
-        <button class="lib-chip"        data-f="pequip" data-v="CIH"  onclick="setLibFilter(this,'pequip','CIH')">Free weights / bands</button>
-        <button class="lib-chip"        data-f="pequip" data-v="VASA" onclick="setLibFilter(this,'pequip','VASA')">Full gym</button>
+        <button class="lib-chip"        data-f="pequip" data-v="home" onclick="setLibFilter(this,'pequip','home')">Home / free weights</button>
+        <button class="lib-chip"        data-f="pequip" data-v="gym"  onclick="setLibFilter(this,'pequip','gym')">Full gym</button>
       </div>
       <div id="progCount" class="lib-count"></div>
       <div id="programLibList"></div>
@@ -1736,9 +1780,11 @@
     </div>
 
     <div class="field"><label>Where are you training?</label>
-      <div class="toggle-group">
-        <input type="radio" name="qsFac" id="qsf-cih" value="CIH" checked><label for="qsf-cih">Home / free weights</label>
-        <input type="radio" name="qsFac" id="qsf-vasa" value="VASA"><label for="qsf-vasa">Full gym</label>
+      <div class="toggle-group tg-grid">
+          <input type="radio" name="qsFac" id="qsf-dumbbell" value="dumbbell"><label for="qsf-dumbbell"><span class="tg-name">Dumbbells only</span><span class="tg-sub">A pair of dumbbells and a bench</span></label>
+          <input type="radio" name="qsFac" id="qsf-home" value="home" checked><label for="qsf-home"><span class="tg-name">Home setup</span><span class="tg-sub">Dumbbells, kettlebells, bands, bench</span></label>
+          <input type="radio" name="qsFac" id="qsf-bands" value="bands"><label for="qsf-bands"><span class="tg-name">Bands &amp; bodyweight</span><span class="tg-sub">Travel friendly, no weights needed</span></label>
+          <input type="radio" name="qsFac" id="qsf-gym" value="gym"><label for="qsf-gym"><span class="tg-name">Full commercial gym</span><span class="tg-sub">Barbells, machines and cables too</span></label>
       </div>
     </div>
 
@@ -2752,7 +2798,7 @@ const COMPOUND = new Set([
   "Dumbbell Overhead Press","Half Kneeling DB Press","Arnold Press","Machine Shoulder Press",
   "Goblet Squat","Goblet Squat to Box","Dumbbell Squat","Split Squat","Bulgarian Split Squat","Reverse Lunge","Walking Lunge (DB)","Step-Up (DB)","Leg Press Machine","Pendulum Squat","TRX Squat",
   "Romanian Deadlift (DB)","Hip Thrust (DB)","Sumo Squat","Hip Thrust Machine",
-  "Dumbbell Thruster","Kettlebell Swing","Renegade Row","World's Greatest Stretch",
+  "Dumbbell Thruster","Kettlebell Swing","Renegade Row",
   "Barbell Back Squat","Barbell Front Squat","Barbell Deadlift","Barbell Romanian Deadlift","Barbell Hip Thrust","Barbell Walking Lunge",
   "Barbell Bench Press","Barbell Incline Bench Press","Close-Grip Barbell Bench Press","Barbell Overhead Press","Barbell Row"
 ]);
@@ -2828,7 +2874,7 @@ const BALLISTIC_MOVES = new Set([
    At VASA the gym is wide open — just rank compounds first (barbells/machines included),
    so VASA sessions aren't biased toward goblet squats. */
 function rankExercise(ex, facility){
-  if(facility === "CIH" && PREFERRED.has(ex.name)) return 2;
+  if(!isFullGym(facility) && PREFERRED.has(ex.name)) return 2;
   return COMPOUND.has(ex.name) ? 1 : 0;
 }
 
@@ -2876,27 +2922,29 @@ const CIH_SWAP = {
    Free exercises pass through unchanged. Tries the explicit map first (and only
    if that target passes the client's conditions), then falls back to the
    free-weight move sharing the most muscle groups. */
-function toFreeSwap(name, conditions, used){
+function toFreeSwap(name, conditions, used, facility){
   conditions = conditions || [];
   used = used || new Set();
+  facility = facility || "home";
   const orig = EXERCISES.find(e=>e.name===name);
-  if(!orig || (orig.equipment==="free" && !orig.noCIH)) return name;
+  const ok = ex => ex.equipment==="free" && fitsProfile(ex, facility);
+  if(!orig || ok(orig)) return name;
   const passes = ex => !((ex.conditions||[]).some(c=>conditions.includes(c)));
   // 1) explicit map (skip if that move is already used in this day)
   const mapped = CIH_SWAP[name];
   if(mapped){
     const m = EXERCISES.find(e=>e.name===mapped);
-    if(m && m.equipment==="free" && !m.noCIH && passes(m) && !used.has(mapped)) return mapped;
+    if(m && ok(m) && passes(m) && !used.has(mapped)) return mapped;
   }
   // 2) best muscle-overlap among free exercises, preferring one not already used
-  const cands = EXERCISES.filter(e => e.equipment==="free" && !e.noCIH && e.name!==name
+  const cands = EXERCISES.filter(e => ok(e) && e.name!==name
     && e.muscles.some(mu=>orig.muscles.includes(mu)) && passes(e));
   if(!cands.length) return mapped || name;
   cands.sort((a,b)=>{
     const sa=a.muscles.filter(mu=>orig.muscles.includes(mu)).length;
     const sb=b.muscles.filter(mu=>orig.muscles.includes(mu)).length;
     if(sb!==sa) return sb-sa;
-    return rankExercise(b,"CIH")-rankExercise(a,"CIH");
+    return rankExercise(b,facility)-rankExercise(a,facility);
   });
   const fresh = cands.find(c=>!used.has(c.name));
   return fresh ? fresh.name : (mapped || cands[0].name);
@@ -4591,8 +4639,53 @@ function quickStartGenerate(){
    ========================================================================= */
 /* CIH = free weights & bodyweight only (dumbbells, kettlebells, bands, bench, box).
    VASA = everything: free weights PLUS barbells, machines and cables. */
-function allowedEquipment(facility){ return facility === "VASA" ? ["free","barbell","machine","bar","trx"] : ["free"]; }
-function isMachineAllowed(f){ return f === "VASA"; }
+/* =========================================================================
+   EQUIPMENT PROFILES
+   =========================================================================
+   What someone actually has to train with, described in plain gear terms so
+   anybody can pick the right one. The old CIH / VASA keys are kept as aliases
+   so every saved workout, client record and library entry still loads.
+   ========================================================================= */
+const EQUIP_PROFILES = {
+  dumbbell: { label:"Dumbbells only",       short:"Dumbbells",  gym:false,
+    blurb:"A pair of dumbbells and somewhere to sit or lie down.",
+    cats:["Dumbbell","Bench / Box","Bodyweight"] },
+  home:     { label:"Home setup",           short:"Home",       gym:false,
+    blurb:"Dumbbells, kettlebells, bands and a bench or box.",
+    cats:["Dumbbell","Kettlebell","Band","Bench / Box","Bodyweight"] },
+  bands:    { label:"Bands & bodyweight",   short:"Bands",      gym:false,
+    blurb:"Resistance bands and your own bodyweight. Travel friendly.",
+    cats:["Band","Bodyweight"] },
+  gym:      { label:"Full commercial gym",  short:"Full gym",   gym:true,
+    blurb:"Barbells, machines, cables, the lot.",
+    cats:null }        // null = everything
+};
+const LEGACY_FACILITY = { CIH:"home", VASA:"gym" };
+/* Accepts an old or new key and always hands back a real profile key. */
+function normFacility(f){
+  if(!f) return "gym";
+  if(EQUIP_PROFILES[f]) return f;
+  if(LEGACY_FACILITY[f]) return LEGACY_FACILITY[f];
+  return "gym";
+}
+function profileOf(f){ return EQUIP_PROFILES[normFacility(f)]; }
+function facilityLabel(f){ const p=profileOf(f); return p?p.label:"Full commercial gym"; }
+function facilityShort(f){ const p=profileOf(f); return p?p.short:"Full gym"; }
+function isFullGym(f){ const p=profileOf(f); return !!(p && p.gym); }
+
+/* Which raw `equipment` values a profile can use at all. */
+function allowedEquipment(facility){
+  return isFullGym(facility) ? ["free","barbell","machine","bar","trx"] : ["free"];
+}
+function isMachineAllowed(f){ return isFullGym(f); }
+/* Second, finer gate: even inside "free" there's a big difference between a
+   band and a pair of dumbbells, so profiles are narrowed by gear category. */
+function fitsProfile(ex, facility){
+  const p=profileOf(facility);
+  if(!p || !p.cats) return true;                 // full gym takes everything
+  if(ex.noCIH) return false;                     // needs an overhead rig
+  return p.cats.indexOf(equipCategory(ex))>=0;
+}
 function shuffle(arr){ const a=[...arr]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
 function repLabel(r){ if(Array.isArray(r)&&typeof r[0]==="string") return `${r[0]}–${r[1]}`; if(Array.isArray(r)) return r[0]===r[1]?`${r[0]}`:`${r[0]}–${r[1]}`; return String(r); }
 /* Rest is always prescribed on a 15-second interval — easier to read, easier to
@@ -4603,7 +4696,12 @@ function cueFor(name){ const e=EXERCISES.find(x=>x.name===name); return e?e.cue:
 function goalLabel(g){ return {toning:"Toning & Recomp",fatloss:"Fat Loss",strength:"Strength / Muscle Gain",general:"General Fitness",mobility:"Mobility"}[g]||g; }
 function escapeHTML(s){ return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
 
-function validPool(facility, conditions){
+function validPool(facility, conditions, opts){
+  /* Stretches and mobility drills are NOT working sets. They are kept out of
+     the normal pool entirely and only handed back when something actually
+     wants them (a mobility day, a cool-down block). Chris was getting
+     "World's Greatest Stretch" served as a main exercise. */
+  const wantMobility = !!(opts && opts.mobility);
   const allowed = allowedEquipment(facility);
   const conds = conditions || [];
   const arthritis = conds.includes("arthritis");
@@ -4619,7 +4717,8 @@ function validPool(facility, conditions){
   const preg      = conds.includes("pregnancy");
   return EXERCISES.filter(ex => {
     if(!allowed.includes(ex.equipment)) return false;
-    if(facility==="CIH" && ex.noCIH) return false;   // free but not CIH-legal (overhead-anchor pulldown, etc.)
+    if(!fitsProfile(ex, facility)) return false;     // gear they actually have
+    if(!wantMobility && ex.mobility) return false;   // never a working exercise
     if(arthritis && !ARTHRITIS_SAFE.has(ex.name)) return false;  // arthritis = vetted allow-list only
     if(noImpact && IMPACT_MOVES.has(ex.name)) return false;      // no jumping for foot/ankle + vascular + cardio + asthma + plantar + pregnancy + postpartum + pelvic floor + hypermobility + osteo
     if(noStep && STEP_MOVES.has(ex.name)) return false;          // no step-ups for foot/ankle + plantar fasciitis
@@ -5044,7 +5143,7 @@ function getWarmupRows(vals, keys){
 /* Dedicated MOBILITY DAY flow: mobility flow → light movement prep → core.
    Respects facility + conditions (e.g. arthritis = standing/bench only). */
 function buildMobilityDay(vals){
-  const pool=validPool(vals.facility, vals.conditions);
+  const pool=validPool(vals.facility, vals.conditions, {mobility:true});
   const mk=(ex,reps,grp)=>({ group:grp, name:ex.name, sets:1, reps, tempo:"Slow & easy", rest:"—", technique:"—", cue:ex.cue });
   const pick=(names,n)=>pool.filter(ex=>names.includes(ex.name)).slice(0,n);
   const byName=n=>pool.find(ex=>ex.name===n);
@@ -5136,7 +5235,7 @@ function buildHiitFinisher(vals){
    ========================================================================= */
 /* ---- Program / session overview helpers (shown on library cards) ---- */
 function libDifficulty(intensity){ return {light:"Beginner-friendly",moderate:"Intermediate",hard:"Advanced",killer:"Advanced"}[intensity]||"All levels"; }
-function libEquip(fac){ return fac==="CIH" ? "Free weights / bands" : (fac==="VASA" ? "Full gym" : "Any gym"); }
+function libEquip(fac){ return fac==="any" ? "Any setup" : facilityShort(fac); }
 const PROGRAM_LEVEL={
   "ppl-hypertrophy":"Intermediate","bro-split":"Intermediate","arnold-split":"Advanced","home-full-body":"Beginner",
   "road-to-olympia":"Advanced","olympia-prep":"Advanced","power-building":"Advanced","onward-lean-bulk":"Advanced",
@@ -5179,7 +5278,7 @@ function setLibFilter(btn, key, val){
 }
 function sessionMatches(s, q){
   if(libFilters.level!=="all" && libDifficulty(s.intensity)!==libFilters.level) return false;
-  if(libFilters.equip!=="all" && s.facility!=="any" && s.facility!==libFilters.equip) return false;
+  if(libFilters.equip!=="all" && s.facility!=="any" && normFacility(s.facility)!==normFacility(libFilters.equip)) return false;
   if(!q) return true;
   const hay=[s.title, s.focusLabel, s.notes||"", libDifficulty(s.intensity), goalLabel(s.goal), libEquip(s.facility),
              ...(s.rows||[]).map(r=>r.name)].join(" ").toLowerCase();
@@ -5206,12 +5305,12 @@ function renderLibraryList(){
 function loadLibrarySession(id){
   const s=SESSION_LIBRARY.find(x=>x.id===id);
   if(!s) return;
-  const facility = s.facility==="any" ? "VASA" : s.facility;
+  const facility = s.facility==="any" ? "gym" : normFacility(s.facility);
   const usedNames=new Set();
   const rows=s.rows.map(r=>{
     // At CIH, swap any machine / bar / overhead-pulldown move to a free-weight match
     let name=r.name;
-    if(facility==="CIH") name=toFreeSwap(r.name, [], usedNames);
+    if(!isFullGym(facility)) name=toFreeSwap(r.name, [], usedNames, facility);
     usedNames.add(name);
     const swapped = name!==r.name;
     return {
@@ -5235,7 +5334,7 @@ function loadLibrarySession(id){
    PROGRAM LIBRARY
    ========================================================================= */
 function programMatches(p, q){
-  if(libFilters.pequip!=="all" && p.facility!=="any" && p.facility!==libFilters.pequip) return false;
+  if(libFilters.pequip!=="all" && p.facility!=="any" && normFacility(p.facility)!==normFacility(libFilters.pequip)) return false;
   if(!q) return true;
   const hay=[p.title, p.summary, p.weeks, p.notes||"", libEquip(p.facility), goalLabel(p.goal),
              PROGRAM_LEVEL[p.id]||"", ...(p.days||[]).map(d=>d.label)].join(" ").toLowerCase();
@@ -5270,14 +5369,14 @@ function loadLibraryProgram(id){
   if(!p) return;
   const force=document.querySelector('input[name=progLibFacility]:checked').value;
   const level=(document.querySelector('input[name=progLevel]:checked')||{}).value||"intermediate";
-  const facility = (force==="CIH") ? "CIH" : (p.facility==="any" ? "VASA" : p.facility);
+  const facility = (force && force!=="keep") ? normFacility(force) : (p.facility==="any" ? "gym" : normFacility(p.facility));
   const days=p.days.map(d=>{
     const usedNames=new Set();   // avoid duplicate swaps within a single day
     const built=d.rows.map(r=>{
       // Whenever the effective facility is CIH (native or forced), swap any
       // machine / barbell / pull-up / pulldown to the closest free-weight match
       let name=r.name;
-      if(facility==="CIH") name=toFreeSwap(r.name, [], usedNames);
+      if(!isFullGym(facility)) name=toFreeSwap(r.name, [], usedNames, facility);
       usedNames.add(name);
       const swapped = name !== r.name;
       return {
@@ -5557,7 +5656,7 @@ function dayTitleFor(day, di, vals, total){
 function sectionOptions(day, vals){
   const pool=validPool(vals.facility, vals.conditions);
   if(day.hiitish){ const h=pool.filter(ex=>ex.hiit); if(h.length) return h; }
-  if(day.mobility){ const m=pool.filter(ex=>MOBILITY_RE.test(ex.name)); if(m.length>=4) return m; }
+  if(day.mobility){ const m=validPool(vals.facility, vals.conditions, {mobility:true}).filter(ex=>ex.mobility||MOBILITY_RE.test(ex.name)); if(m.length>=4) return m; }
   const muscles=day.muscles || SPLIT_MUSCLES[day.key] || [];
   let rel=pool.filter(ex=>(ex.muscles||[]).some(m=>muscles.includes(m)));
   // A Core block shouldn't fill up with conditioning moves (burpees, high knees) —
@@ -5626,13 +5725,99 @@ function removeSection(di){
   showToast("Section removed");
 }
 
+/* =========================================================================
+   EDITABLE HIIT FINISHER
+   =========================================================================
+   The finisher used to be printed as read-only text — the only way to change
+   it was to delete it and add a whole new section. Now the rounds, the work
+   and rest times and every move can be edited in place, same as any other
+   part of the program.
+   ========================================================================= */
+function hiitMovePool(){
+  const vals=(currentProgram&&currentProgram.vals)||{facility:"gym",conditions:[]};
+  const pool=validPool(vals.facility, vals.conditions).filter(ex=>ex.hiit);
+  return (pool.length?pool:validPool(vals.facility, vals.conditions))
+    .slice().sort((a,b)=>a.name.localeCompare(b.name));
+}
+function hiitSet(field, val){
+  if(!currentProgram || !currentProgram.hiitData) return;
+  const n=parseInt(val,10);
+  currentProgram.hiitData[field] = isNaN(n) ? val : Math.max(1, n);
+  doAutosave();
+  redrawHiit();
+}
+function hiitSetMove(i, name){
+  const h=currentProgram && currentProgram.hiitData; if(!h||!h.moves||!h.moves[i]) return;
+  h.moves[i].name=name;
+  h.moves[i].cue=cueFor(name)||"";
+  doAutosave();
+  redrawHiit();
+}
+function hiitDelMove(i){
+  const h=currentProgram && currentProgram.hiitData; if(!h||!h.moves) return;
+  if(h.moves.length<=1){ showToast("Keep at least one move, or remove the finisher"); return; }
+  h.moves.splice(i,1); doAutosave(); redrawHiit();
+}
+function hiitAddMove(){
+  const h=currentProgram && currentProgram.hiitData; if(!h) return;
+  h.moves=h.moves||[];
+  const used=h.moves.map(m=>m.name);
+  const pick=hiitMovePool().find(e=>used.indexOf(e.name)<0) || hiitMovePool()[0];
+  if(!pick){ showToast("No suitable moves for this setup"); return; }
+  h.moves.push({ name:pick.name, cue:cueFor(pick.name)||"" });
+  doAutosave(); redrawHiit();
+}
+function hiitRemove(){
+  if(!currentProgram) return;
+  if(!confirm("Remove the finisher from this workout?")) return;
+  currentProgram.hiitData=null; doAutosave();
+  renderProgram(currentProgram.vals, currentProgram.days, null);
+  showToast("Finisher removed");
+}
+/* Repaint just the finisher so typing doesn't rebuild the whole program. */
+function redrawHiit(){
+  const host=document.getElementById("hiitBlock");
+  if(host) host.outerHTML=hiitBlockHTML(currentProgram?currentProgram.hiitData:null);
+}
+function hiitBlockHTML(hiitData){
+  if(!hiitData) return "";
+  const title=hiitData.title||"HIIT Finisher";
+  if(hiitData.steady){
+    return `<div class="hiit-block" id="hiitBlock"><h3>${escapeHTML(title)}</h3>
+      <p style="font-size:.85rem;color:var(--muted)">${escapeHTML(hiitData.note||"")}</p>
+      <div class="btn-row no-print"><button class="btn btn-secondary btn-sm" onclick="hiitRemove()">Remove finisher</button></div></div>`;
+  }
+  const pool=hiitMovePool();
+  const rows=(hiitData.moves||[]).map((m,i)=>{
+    const opts=pool.map(e=>`<option value="${escapeHTML(e.name)}"${e.name===m.name?" selected":""}>${escapeHTML(e.name)}</option>`).join("");
+    const extra=pool.some(e=>e.name===m.name)?"":`<option value="${escapeHTML(m.name)}" selected>${escapeHTML(m.name)}</option>`;
+    return `<tr>
+      <td class="hf-num">${i+1}</td>
+      <td class="hf-ex"><select class="editable-select" onchange="hiitSetMove(${i},this.value)">${extra}${opts}</select></td>
+      <td class="hf-cue">${escapeHTML(m.cue||"")}</td>
+      <td class="hf-del no-print"><button class="del-row-btn" onclick="hiitDelMove(${i})" title="Remove" aria-label="Remove ${escapeHTML(m.name)}">✕</button></td>
+    </tr>`;
+  }).join("");
+  return `<div class="hiit-block" id="hiitBlock">
+    <h3>${escapeHTML(title)}</h3>
+    <div class="hf-cfg">
+      <label><span>Rounds</span><input type="text" inputmode="numeric" value="${escapeHTML(String(hiitData.rounds||3))}" onchange="hiitSet('rounds',this.value)"></label>
+      <label><span>Work (sec)</span><input type="text" inputmode="numeric" value="${escapeHTML(String(hiitData.workSec||40))}" onchange="hiitSet('workSec',this.value)"></label>
+      <label><span>Rest (sec)</span><input type="text" inputmode="numeric" value="${escapeHTML(String(hiitData.restSec||20))}" onchange="hiitSet('restSec',this.value)"></label>
+    </div>
+    <table class="hf-table"><tbody>${rows}</tbody></table>
+    <div class="btn-row no-print" style="margin-top:8px">
+      <button class="btn btn-secondary btn-sm" onclick="hiitAddMove()">+ Add a move</button>
+      <button class="btn btn-secondary btn-sm" onclick="hiitRemove()">Remove finisher</button>
+    </div></div>`;
+}
 function renderProgram(vals, days, hiitData){
   // Work on a copy so prefilling remembered weights never mutates the saved
   // template / currentProgram that was handed in.
   days = (days||[]).map(d=>({...d, rows:(d.rows||[]).map(r=>({...r}))}));
   const today=new Date().toLocaleDateString("en-US",{weekday:"long",year:"numeric",month:"long",day:"numeric"});
   const goalLabels=(vals.goals||[]).map(goalLabel).join(", ");
-  const facilityTag=vals.facility==="CIH"?"CIH — Free Weights":"VASA — Full Gym";
+  const facilityTag=facilityLabel(vals.facility);
   const multiDay=days.length>1;
   const letters="ABCDEFGHIJ";
 
@@ -5722,16 +5907,7 @@ function renderProgram(vals, days, hiitData){
   }
   if(vals.weeklySchedule) planHTML+=scheduleHTML(vals.weeklySchedule);
 
-  let hiitHTML="";
-  if(hiitData){
-    const title=hiitData.title||"HIIT Finisher";
-    if(hiitData.steady){
-      hiitHTML=`<div class="hiit-block"><h3>${escapeHTML(title)}</h3><p style="font-size:.85rem;color:var(--muted)">${escapeHTML(hiitData.note||"")}</p></div>`;
-    } else {
-      const moveList=hiitData.moves.map((m,i)=>`<tr><td style="padding:5px 8px;font-weight:600">${i+1}. ${escapeHTML(m.name)}</td><td style="padding:5px 8px;color:var(--muted);font-size:.82rem">${escapeHTML(m.cue)}</td></tr>`).join("");
-      hiitHTML=`<div class="hiit-block"><h3>${escapeHTML(title)}</h3><p style="font-size:.85rem;margin-bottom:10px;color:var(--muted)">${hiitData.rounds} rounds · ${hiitData.workSec}s work / ${hiitData.restSec}s rest</p><table style="width:100%;border-collapse:collapse">${moveList}</table></div>`;
-    }
-  }
+  const hiitHTML = hiitBlockHTML(hiitData);
 
   let dndHTML="";
   for(const key of effectiveSheets(vals)) dndHTML+=renderDosDonts(key);
@@ -6116,7 +6292,7 @@ function programToStaticHTML(data){
   const vals=data.vals;
   const today=new Date().toLocaleDateString("en-US",{weekday:"long",year:"numeric",month:"long",day:"numeric"});
   const goalLabels=(vals.goals||[]).map(goalLabel).join(", ");
-  const facilityTag=vals.facility==="CIH"?"CIH — Free Weights":"VASA — Full Gym";
+  const facilityTag=facilityLabel(vals.facility);
   const multiDay=data.days.length>1; const letters="ABCDEFGHIJ";
   let title = `${vals.name}'s ${programLabel(vals, data.days)}`;
 
@@ -7698,7 +7874,7 @@ function tdSwap(dayIdx, rowIdx){
   const day=(saved.days||[])[dayIdx]; if(!day) return;
   const row=(day.rows||[])[rowIdx]; if(!row) return;
   const cur=row.name, vals=saved.vals||{};
-  const facility=vals.facility||"VASA", conds=vals.conditions||[];
+  const facility=vals.facility||"gym", conds=vals.conditions||[];
   const pool=validPool(facility, conds);
   const curEx=EXERCISES.find(e=>e.name===cur);
   const used=(day.rows||[]).map(r=>r.name);
@@ -7999,7 +8175,7 @@ function planIsFinished(){
    already used that day. Falls back to leaving it alone. */
 function rotateChoice(row, vals, usedNames){
   const cur=EXERCISES.find(e=>e.name===row.name); if(!cur) return row.name;
-  const pool=validPool(vals.facility||"VASA", vals.conditions||[]);
+  const pool=validPool(vals.facility||"gym", vals.conditions||[]);
   const cands=pool.filter(e=>e.name!==row.name && usedNames.indexOf(e.name)<0
     && e.muscles.some(m=>cur.muscles.includes(m))
     && (COMPOUND.has(e.name)===COMPOUND.has(row.name)));   // like for like
@@ -8122,7 +8298,7 @@ function adjustForPain(area){
   const vals=saved.vals||{};
   const conds=(vals.conditions||[]).slice();
   if(conds.indexOf(cond)<0) conds.push(cond);
-  const safe=validPool(vals.facility||"VASA", conds);
+  const safe=validPool(vals.facility||"gym", conds);
   let swapped=0;
   (saved.days||[]).forEach(d=>{
     const used=(d.rows||[]).map(r=>r.name);
@@ -8483,7 +8659,7 @@ function openExPicker(opts){
   const vals = currentProgram ? currentProgram.vals : null;
   _exPick = {
     onPick: (opts&&opts.onPick) || null,
-    facility: (opts&&opts.facility) || (vals&&vals.facility) || "VASA",
+    facility: (opts&&opts.facility) || (vals&&vals.facility) || "gym",
     conditions: (opts&&opts.conditions) || (vals&&vals.conditions) || [],
     title: (opts&&opts.title) || "Choose an exercise",
     current: (opts&&opts.current) || "",
@@ -8729,7 +8905,7 @@ function browseExercises(which){
   const facSel = which==="session" ? 'input[name=sessFacility]:checked' : 'input[name=facility]:checked';
   const condSel= which==="session" ? '#sessConditions input:checked'    : '#conditions input:checked';
   const f=document.querySelector(facSel);
-  const facility=f?f.value:"VASA";
+  const facility=f?f.value:"gym";
   let conditions=[...document.querySelectorAll(condSel)].map(c=>c.value).filter(v=>v&&v!=="none");
   openExPicker({
     title:"Browse exercises", facility, conditions,

@@ -1,3 +1,23 @@
+# OS junk
 Thumbs.db
 desktop.ini
 .DS_Store
+
+# ---------------------------------------------------------------------------
+# NEVER PUBLISH. This repo is PUBLIC and serves the client-facing site.
+# The trainer build and anything carrying client data must stay out of it,
+# even if a file is ever copied or moved into this folder by mistake.
+# ---------------------------------------------------------------------------
+*PRIVATE*
+*private*
+_trainer-clients-addon.html
+*trainer*
+sync-private-copy.ps1
+serve.ps1
+.claude/
+
+# client data exports / backups
+*clients*.json
+*backup*.json
+progress-*.html
+my-clients-backup-*.json

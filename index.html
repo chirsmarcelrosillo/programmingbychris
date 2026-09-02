@@ -4,15 +4,18 @@
 <meta charset="UTF-8">
 <meta id="viewportMeta" name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>PT Workout Generator</title>
-<!-- Installable "Add to Home Screen" support (icon + manifest are generated at
-     runtime in setupPWA() so this stays a single file). -->
-<meta name="theme-color" content="#17101f">
+<!-- Installable app: real manifest, real PNG icons, and a service worker for
+     offline. Paths are relative so this works from a GitHub Pages subfolder.
+     The private desktop copy is opened as a local file where none of these
+     exist, so every one of them fails softly. -->
+<meta name="theme-color" content="#1a1220">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Chris's Programming">
-<link id="appleIcon" rel="apple-touch-icon" href="">
-<link id="appManifest" rel="manifest" href="">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+<link rel="manifest" href="./manifest.json">
 <style>
   /* =====================================================================
      GLOBAL
@@ -1067,6 +1070,29 @@
     .hf-cfg input{ width:100%; }
     .hf-cfg label{ flex:1 1 30%; }
   }
+  /* First-run disclaimer + service-worker update bar */
+  .dsc-card{ max-width:600px; }
+  .dsc-lead{ color:var(--muted); font-size:.92rem; line-height:1.6; margin-bottom:16px; }
+  .dsc-list{ display:flex; flex-direction:column; gap:11px; margin-bottom:15px; }
+  .dsc-item{ display:flex; gap:11px; align-items:flex-start; font-size:.88rem; line-height:1.55; }
+  .dsc-item > span{ flex-shrink:0; width:22px; height:22px; border-radius:50%; display:grid; place-items:center;
+    background:oklch(0.62 0.15 325 / .22); color:var(--accent); font-size:.72rem; font-weight:800; margin-top:1px; }
+  .dsc-item strong{ color:var(--text); }
+  .dsc-item div{ color:var(--muted); }
+  .dsc-fine{ font-size:.78rem; color:var(--muted); line-height:1.55; padding:11px 13px; border-radius:10px;
+    background:var(--surface-2); border:1px solid var(--border); margin-bottom:14px; }
+  .sw-update{ position:fixed; left:50%; transform:translateX(-50%); bottom:16px; z-index:5200;
+    display:flex; align-items:center; gap:11px; background:var(--surface); color:var(--text);
+    border:1px solid var(--accent); border-radius:999px; padding:9px 10px 9px 18px; font-size:.86rem;
+    box-shadow:0 10px 30px rgba(0,0,0,.4); max-width:calc(100vw - 24px); }
+  .sw-x{ background:none; border:none; color:var(--muted); font-size:.9rem; cursor:pointer; padding:4px 8px; }
+  .sw-x:hover{ color:var(--text); }
+  @supports (padding: max(0px)){ .sw-update{ bottom:max(16px, env(safe-area-inset-bottom)); } }
+  @media(max-width:560px){
+    .sw-update{ border-radius:14px; left:12px; right:12px; transform:none; max-width:none; }
+    .dsc-item{ font-size:.85rem; }
+  }
+  @media print{ .sw-update, .wn-overlay{ display:none !important; } }
 </style>
 </head>
 <body>
@@ -1099,6 +1125,7 @@
   <div class="sidebar-foot foot-links">
     <button onclick="sendFeedback()">💬 Send feedback</button>
     <button onclick="showWhatsNew()">What's new</button>
+    <button onclick="showDisclaimer(false)">Safety &amp; disclaimer</button>
     <button onclick="showWelcome()">Quick tour</button>
   </div>
 </aside>
@@ -9195,6 +9222,63 @@ function sendFeedback(){
    dropped onto the builder cold. Reopen any time isn't needed; What's New
    covers ongoing changes.
    ========================================================================= */
+/* =========================================================================
+   FIRST-RUN DISCLAIMER
+   =========================================================================
+   The condition list covers pregnancy, postpartum, pelvic floor,
+   osteoporosis, cardiovascular and post-surgery return. Anyone who isn't one
+   of Chris's own clients needs to see, plainly and before they build
+   anything, that this is a programming aid and not medical advice.
+
+   Deliberately a gate, not a toast: no close button, no click-outside, and
+   it must be acknowledged. Bump DISCLAIMER_VERSION if the wording ever
+   changes materially and everyone will be asked again.
+   ========================================================================= */
+const DISCLAIMER_VERSION="1";
+function disclaimerAccepted(){
+  try{ return localStorage.getItem("pt_disclaimer")===DISCLAIMER_VERSION; }catch(e){ return false; }
+}
+function maybeShowDisclaimer(){
+  if(disclaimerAccepted()) return false;
+  showDisclaimer(true); return true;
+}
+function showDisclaimer(isGate){
+  let el=document.getElementById("disclaimerModal");
+  if(!el){ el=document.createElement("div"); el.id="disclaimerModal"; el.className="wn-overlay"; document.body.appendChild(el); }
+  el.innerHTML=`<div class="wn-card dsc-card" role="dialog" aria-modal="true" aria-labelledby="dscTitle">
+    <div class="wn-badge">Please read</div>
+    <h2 class="wn-title" id="dscTitle">Before you start</h2>
+    <p class="dsc-lead">This app builds workout plans. It is a tool to help you organise training, not a medical service, and it does not know anything about you beyond what you type in.</p>
+    <div class="dsc-list">
+      <div class="dsc-item"><span>1</span><div><strong>It is not medical advice.</strong> Nothing here is a diagnosis, a treatment, or physiotherapy. It cannot see you move and it cannot tell whether an exercise is safe for your body.</div></div>
+      <div class="dsc-item"><span>2</span><div><strong>Get cleared first.</strong> Talk to your doctor before starting, especially if you are pregnant or postpartum, have heart, blood pressure or bone density concerns, are returning from surgery or injury, or have any condition that affects how you move.</div></div>
+      <div class="dsc-item"><span>3</span><div><strong>The guidance sheets are general.</strong> The Do's and Don'ts written for things like pregnancy, pelvic floor or osteoporosis are general education. Your own doctor, midwife or physio overrules anything in here, every time.</div></div>
+      <div class="dsc-item"><span>4</span><div><strong>Stop if something is wrong.</strong> Sharp pain, dizziness, chest pain, breathlessness, leaking or bleeding all mean stop and get advice. Soreness is normal. Pain is not.</div></div>
+      <div class="dsc-item"><span>5</span><div><strong>You are responsible for how you train.</strong> Use your judgement, work within what you can control, and get a qualified professional to watch you if you are unsure.</div></div>
+    </div>
+    <p class="dsc-fine">Built by a personal trainer as a programming aid for qualified professionals and their clients. Your data stays in this browser and is never uploaded.</p>
+    ${isGate
+      ? `<div class="btn-row" style="gap:8px;margin-top:4px">
+           <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="acceptDisclaimer()">I understand, continue</button>
+         </div>`
+      : `<div class="btn-row" style="gap:8px;margin-top:4px">
+           <button class="btn btn-secondary" style="flex:1;justify-content:center" onclick="closeDisclaimer()">Close</button>
+         </div>`}
+  </div>`;
+  el.style.display="flex";
+  // A gate can't be dismissed by clicking away or hitting escape.
+  el.onclick = isGate ? null : (e=>{ if(e.target===el) closeDisclaimer(); });
+  const b=el.querySelector("button"); if(b) b.focus();
+}
+function acceptDisclaimer(){
+  try{ localStorage.setItem("pt_disclaimer", DISCLAIMER_VERSION); }catch(e){}
+  closeDisclaimer();
+  // Now they can have the tour.
+  if(!maybeShowWelcome()) maybeShowWhatsNew();
+}
+function closeDisclaimer(){
+  const el=document.getElementById("disclaimerModal"); if(el) el.style.display="none";
+}
 function maybeShowWelcome(){
   let seen=null; try{ seen=localStorage.getItem("pt_welcome"); }catch(e){}
   if(seen) return false;
@@ -9229,32 +9313,44 @@ function closeWelcome(){
   const el=document.getElementById("welcomeModal"); if(el) el.style.display="none";
 }
 
-/* Make the site installable to a phone/desktop home screen. The icon and web
-   app manifest are drawn/built at runtime so the app remains one HTML file. */
+/* =========================================================================
+   PWA REGISTRATION
+   =========================================================================
+   The manifest and icons are real files now, so this only has to register the
+   service worker. It stays quiet everywhere it can't work: the private copy
+   opened as a local file, private browsing, or any browser without support.
+   ========================================================================= */
 function setupPWA(){
-  try{
-    const S=512, c=document.createElement("canvas"); c.width=c.height=S;
-    const x=c.getContext("2d");
-    const g=x.createLinearGradient(0,0,S,S);
-    g.addColorStop(0,"#8b48ad"); g.addColorStop(1,"#3a2350");
-    x.fillStyle=g; x.fillRect(0,0,S,S);
-    // simple white dumbbell
-    x.fillStyle="#fff";
-    x.fillRect(196,238,120,36);          // bar
-    x.fillRect(150,206,30,100);          // left inner plate
-    x.fillRect(112,224,26,64);           // left outer plate
-    x.fillRect(332,206,30,100);          // right inner plate
-    x.fillRect(374,224,26,64);           // right outer plate
-    const icon=c.toDataURL("image/png");
-    const ai=document.getElementById("appleIcon"); if(ai) ai.href=icon;
-    const manifest={ name:"Chris's Programming", short_name:"Programming",
-      description:"Workout builder & progress tracker", start_url:location.pathname||"/",
-      display:"standalone", background_color:"#17101f", theme_color:"#17101f",
-      icons:[ {src:icon,sizes:"512x512",type:"image/png",purpose:"any maskable"},
-              {src:icon,sizes:"192x192",type:"image/png",purpose:"any"} ] };
-    const ml=document.getElementById("appManifest");
-    if(ml) ml.href=URL.createObjectURL(new Blob([JSON.stringify(manifest)],{type:"application/manifest+json"}));
-  }catch(e){}
+  if(!("serviceWorker" in navigator)) return;
+  if(location.protocol!=="https:" && location.hostname!=="localhost" && location.hostname!=="127.0.0.1") return;
+  window.addEventListener("load", function(){
+    navigator.serviceWorker.register("./sw.js").then(function(reg){
+      // A new version downloaded while they had it open: let them take it now
+      // rather than silently serving yesterday's copy.
+      reg.addEventListener("updatefound", function(){
+        var sw=reg.installing; if(!sw) return;
+        sw.addEventListener("statechange", function(){
+          if(sw.state==="installed" && navigator.serviceWorker.controller){
+            showUpdateReady(reg);
+          }
+        });
+      });
+    }).catch(function(){ /* offline support just won't be available */ });
+  });
+}
+function showUpdateReady(reg){
+  if(document.getElementById("swUpdate")) return;
+  var bar=document.createElement("div");
+  bar.id="swUpdate"; bar.className="sw-update";
+  bar.innerHTML='<span>A newer version of the app is ready.</span>'
+    + '<button class="btn btn-primary btn-sm" id="swReload">Refresh</button>'
+    + '<button class="sw-x" aria-label="Dismiss">✕</button>';
+  document.body.appendChild(bar);
+  bar.querySelector("#swReload").onclick=function(){
+    if(reg.waiting) reg.waiting.postMessage("skipWaiting");
+    location.reload();
+  };
+  bar.querySelector(".sw-x").onclick=function(){ bar.remove(); };
 }
 
 renderTemplateList();
@@ -9271,7 +9367,8 @@ toggleFrequency();
 loadQsAnswers();
 loadFromHash();
 setupPWA();
-if(!maybeShowWelcome()) maybeShowWhatsNew();   // first-timers see Welcome; returning users see What's New
+// The disclaimer gates the tour: nobody sees the app before acknowledging it.
+if(!maybeShowDisclaimer()){ if(!maybeShowWelcome()) maybeShowWhatsNew(); }
 applyTheme((function(){ try{ return localStorage.getItem("pt_theme")||"dark"; }catch(e){ return "dark"; } })());
 applyViewPrefs();
 applyDesktopMode();
